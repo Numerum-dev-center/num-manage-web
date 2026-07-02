@@ -1,8 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: var(--theme-page-bg);
+  --foreground: var(--theme-text-primary);
+  --theme-page-bg: #fcfefd;
+  --theme-card-bg: #ffffff;
+  --theme-input-bg: #fcfefd;
+  --theme-surface-muted: #fcfefd;
+  --theme-text-primary: #076648;
+  --theme-text-secondary: #81bdaa;
+  --theme-text-inverse: #fcfefd;
+  --theme-border: rgba(129, 189, 170, 0.3);
+  --theme-border-strong: rgba(129, 189, 170, 0.6);
+  --theme-primary: #076648;
+  --theme-primary-hover: #06553d;
+  --theme-accent: #ef4726;
+  --theme-error: #ef4726;
+  --theme-sidebar-bg: #1e1e1e;
+  --theme-sidebar-hover: #2d2d2d;
+  --theme-sidebar-border: #2f2f2f;
+  --theme-sidebar-muted: #9ca3af;
+  --theme-progress-track: #f3f4f6;
+  --theme-muted: #9ca3af;
+  --theme-shadow: rgba(7, 102, 72, 0.12);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --theme-page-bg: #0f1f19;
+  --theme-card-bg: #142922;
+  --theme-input-bg: #173128;
+  --theme-surface-muted: #1c3028;
+  --theme-text-primary: #ecfdf5;
+  --theme-text-secondary: #8bd4bc;
+  --theme-text-inverse: #f4fdf9;
+  --theme-border: rgba(139, 212, 188, 0.25);
+  --theme-border-strong: rgba(139, 212, 188, 0.5);
+  --theme-primary: #2eb67d;
+  --theme-primary-hover: #2a9b6e;
+  --theme-accent: #ff7a59;
+  --theme-error: #ff7a59;
+  --theme-sidebar-bg: #0f1714;
+  --theme-sidebar-hover: #1e2b25;
+  --theme-sidebar-border: #23372e;
+  --theme-sidebar-muted: #9ea8a4;
+  --theme-progress-track: #2a3c34;
+  --theme-muted: #9ca3af;
+  --theme-shadow: rgba(0, 0, 0, 0.35);
 }
 
 @theme inline {
@@ -13,14 +58,34 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --theme-page-bg: #0f1f19;
+    --theme-card-bg: #142922;
+    --theme-input-bg: #173128;
+    --theme-surface-muted: #1c3028;
+    --theme-text-primary: #ecfdf5;
+    --theme-text-secondary: #8bd4bc;
+    --theme-text-inverse: #f4fdf9;
+    --theme-border: rgba(139, 212, 188, 0.25);
+    --theme-border-strong: rgba(139, 212, 188, 0.5);
+    --theme-primary: #2eb67d;
+    --theme-primary-hover: #2a9b6e;
+    --theme-accent: #ff7a59;
+    --theme-error: #ff7a59;
+    --theme-sidebar-bg: #0f1714;
+    --theme-sidebar-hover: #1e2b25;
+    --theme-sidebar-border: #23372e;
+    --theme-sidebar-muted: #9ea8a4;
+    --theme-progress-track: #2a3c34;
+    --theme-muted: #9ca3af;
+    --theme-shadow: rgba(0, 0, 0, 0.35);
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: var(--theme-page-bg);
+  color: var(--theme-text-primary);
   font-family: Arial, Helvetica, sans-serif;
 }
+
