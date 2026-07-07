@@ -184,7 +184,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
               <div key={index}>
                 <button
                   type="button"
-                  onClick={() => item.label === "Class" && setIsClassOpen((current) => !current)}
+                  onClick={() => item.label =="Class" && setIsClassOpen((current) => !current)}
                   className={`w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition ${item.active ? "bg-(--theme-page-hover) text-(--theme-text)" : "hover:bg-(--theme-sidebar-hover)/80 hover:text-(--theme-text)"
                     }`}
                 >
