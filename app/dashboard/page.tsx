@@ -1,24 +1,31 @@
-﻿"use client";
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import {
+  Search,
+  Bell,
+  ChevronRight,
+  User,
+  ArrowUpRight,
+  Moon,
+  Sun,
+} from "lucide-react";
 import { useAuthStore } from '@/lib/stores/auth.store';
-import { Search, Bell, ChevronRight, ArrowUpRight } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 
 export default function StudentDashboard() {
-  const router = useRouter();
-  const [aiInput, setAiInput] = useState('');
   const user = useAuthStore((state) => state.user);
+  const [activeTab, setActiveTab] = useState("Overview");
+  const [isClassOpen, setIsClassOpen] = useState(true);
 
   const courses = [
-    { title: 'Data Analyst', level: 'Level 2', lesson: 'Lesson 8', progress: 75, color: 'var(--theme-text-secondary)' },
-    { title: 'UX/UI Foundation', level: 'Level 3', lesson: 'Lesson 8', progress: 55, color: 'var(--theme-accent)' },
+    { title: "Data Analyst", level: "Level 2", lesson: "Lesson 8", progress: 75, color: "var(--theme-text-secondary)" },
+    { title: "UX/UI Foundation", level: "Level 3", lesson: "Lesson 8", progress: 55, color: "var(--theme-accent)" },
   ];
 
   const upcomingEvents = [
-    { title: 'Job To Be Done Workshop', time: '06:00pm', date: 'Jun 06, 2023' },
-    { title: 'Job To Be Done Workshop', time: '06:00pm', date: 'Jun 06, 2023' },
-    { title: 'Job To Be Done Workshop', time: '06:00pm', date: 'Jun 06, 2023' },
+    { title: "Job To Be Done Workshop", time: "06:00pm", date: "Jun 06, 2023" },
+    { title: "Job To Be Done Workshop", time: "06:00pm", date: "Jun 06, 2023" },
+    { title: "Job To Be Done Workshop", time: "06:00pm", date: "Jun 06, 2023" },
   ];
 
   return (
@@ -26,7 +33,7 @@ export default function StudentDashboard() {
       <main className="flex-1 flex flex-col p-8 overflow-y-auto min-w-0 gap-6">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-(--theme-text-primary)">Salut {user ? `${user.firstname}` : '...'}</h1>
+            <h1 className="text-3xl font-bold text-(--theme-text-primary)">Hello { user?.firstname}</h1>
           </div>
           <div className="flex items-center gap-4">
             <div className="relative w-64">
@@ -49,9 +56,7 @@ export default function StudentDashboard() {
             <div key={index} className="p-6 rounded-2xl bg-(--theme-card-bg) border border-(--theme-border) shadow-sm flex flex-col gap-4 relative overflow-hidden group">
               <div className="flex justify-between items-start">
                 <div className="flex flex-col gap-1">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-(--theme-text-secondary)">
-                    {course.level} <span className="mx-1">|</span> {course.lesson}
-                  </span>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-(--theme-text-secondary)">{course.level} <span className="mx-1">|</span> {course.lesson}</span>
                   <h3 className="text-xl font-bold text-(--theme-text-primary)">{course.title}</h3>
                 </div>
                 <div className="p-2 rounded-lg bg-(--theme-surface-muted) text-(--theme-text-primary) border border-(--theme-border)">
@@ -95,7 +100,7 @@ export default function StudentDashboard() {
           </div>
           <h2 className="text-lg font-bold text-(--theme-text-primary)">{user ? `${user.firstname} ${user.lastname}` : '...'}</h2>
           <p className="text-xs text-(--theme-text-secondary) font-medium mt-0.5">Student</p>
-          <button onClick={() => router.push('/dashboard/profile')} className="mt-4 px-4 py-1.5 text-xs font-semibold border border-(--theme-border-strong) rounded-lg hover:border-(--theme-primary) transition-colors">Edit</button>
+          <button className="mt-4 px-4 py-1.5 text-xs font-semibold border border-(--theme-border-strong) rounded-lg hover:border-(--theme-primary) transition-colors">Edit</button>
         </div>
 
         <div className="flex flex-col gap-3">
