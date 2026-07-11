@@ -67,7 +67,7 @@ export default function LoginPage() {
           router.push('/');
       }
     } catch (err: any) {
-      const { data } = err.response?.data;
+      const data = err.response?.data;
       const message = Array.isArray(data?.message)
         ? data.message[0]
         : data?.message ?? 'Une erreur est survenue';
