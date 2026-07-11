@@ -28,7 +28,7 @@ const user = useAuthStore((state) => state.user);
   ];
 
   const hoverUnderlineStyle =
-    'relative pb-1 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[var(--theme-accent)] after:transition-all after:duration-300 hover:after:w-full cursor-pointer';
+    'relative pb-1 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-(--theme-accent) after:transition-all after:duration-300 hover:after:w-full cursor-pointer';
 
   return (
     <main className="flex-1 p-8 overflow-y-auto flex flex-col gap-6">
