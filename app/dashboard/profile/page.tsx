@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Camera, Loader2 } from "lucide-react";
 import api from "@/lib/api";
 import { useAuthStore } from "@/lib/stores/auth.store";
+import { getErrorMessage } from "@/lib/get-error-message";
 import { z } from "zod";
 
 const profileSchema = z.object({
@@ -74,13 +75,6 @@ export default function ProfilePage() {
       lastname: user.lastname ?? "",
       email: user.email ?? "",
     });
-
-
-    if (user.avatarUrl) {
-      setAvatarPreview(user.avatarUrl);
-    }
-
-
   }, [user]);
 
 
@@ -144,29 +138,6 @@ export default function ProfilePage() {
 
   };
   /**
-   * Extraction erreur API
-   */
-  const extractErrorMessage = (err: any) => {
-    const data = err?.response?.data;
-    const raw =
-      data?.message ??
-      data?.error ??
-      err?.message;
-    if (Array.isArray(raw)) {
-
-      return raw[0] ?? "Une erreur est survenue au niveau du serveur";
-
-    }
-    if (typeof raw === "string") {
-
-      return raw;
-
-    }
-    return "Une erreur est survenue da";
-
-  };
-
-  /**
    * Enregistrement du profil
    */
   const handleSubmit = async (
@@ -195,39 +166,20 @@ export default function ProfilePage() {
         "/users/me",
         result.data
       );
-      if (avatarFile) {
-        const avatarFormData = new FormData();
-        avatarFormData.append(
-          "avatar",
-          avatarFile
-        );
-        await api.post(
-          "/users/me/avatar",
-          avatarFormData,
-          {
-            headers: {
-              "Content-Type":
-                "multipart/form-data",
-            },
-          }
-        );
-
-      }
       setAuth(
         response.data,
         accessToken!
       );
       setMessage({
         type: "success",
-        text:
-          "Profil mis à jour avec succès",
+        text: avatarFile
+          ? "Profil mis à jour. L'enregistrement de la photo sera bientôt disponible."
+          : "Profil mis à jour avec succès",
       });
-      setAvatarFile(null);
-    } catch (err: any) {
+    } catch (err) {
       setMessage({
         type: "error",
-        text:
-          extractErrorMessage(err),
+        text: getErrorMessage(err, "Une erreur est survenue au niveau du serveur"),
       });
     } finally {
       setIsLoading(false);
