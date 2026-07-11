@@ -4,8 +4,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Search, Sun, Moon, Bell, LogOut, User } from 'lucide-react';
 import { useAuthStore } from '@/lib/stores/auth.store';
-import axios from 'axios';
-import { navigate } from 'next/dist/client/components/segment-cache/navigation';
 import { useRouter } from 'next/navigation';
 
 
@@ -31,11 +29,11 @@ export default function Navbar() {
   };
 const handleLogout = async () => {
       await logout();
-      router.push('/login');
+      router.push('/auth/login');
   };
 
   const hoverUnderlineStyle =
-    'relative pb-1 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[var(--theme-accent)] after:transition-all after:duration-300 group-hover:after:w-full cursor-pointer';
+    'relative pb-1 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-(--theme-accent) after:transition-all after:duration-300 group-hover:after:w-full cursor-pointer';
 
   return (
     <header className="h-16 bg-(--theme-card-bg) border-b border-(--theme-border) flex items-center justify-between px-8 shrink-0 w-full transition-colors duration-300">
