@@ -45,8 +45,9 @@ export const useAuthStore = create<AuthState>()(
             accessToken: null,
           });
 
-          // Nettoyage localStorage
+          // Nettoyage localStorage (les deux emplacements où le token vit)
           localStorage.removeItem('auth-storage');
+          localStorage.removeItem('accessToken');
         }
       },
     }),
