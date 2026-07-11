@@ -239,49 +239,24 @@ export default function ProfilePage() {
   return (
     <div className="p-6 max-w-2xl mx-auto">
 
-      <h1 className="text-2xl font-bold text-[#8eaaa1] mb-1">
+      <h1 className="text-2xl font-bold text-(--theme-text-primary) mb-1">
         Mon profil
       </h1>
-      <p className="text-sm text-[#076648]/60 mb-6">
+      <p className="text-sm text-(--theme-text-secondary) mb-6">
         Gère tes informations personnelles et ta photo de profil
       </p>
       <form
         onSubmit={handleSubmit}
-        className="
-          bg-white 
-          rounded-2xl 
-          border 
-          border-[#81bdaa]/30 
-          shadow-sm 
-          overflow-hidden
-        "
+        className="bg-(--theme-card-bg) rounded-2xl border border-(--theme-border) shadow-sm overflow-hidden"
       >
 
-
         {/* Bandeau */}
-        <div className="
-          h-24 
-          bg-linear-to-r 
-          from-[#076648] 
-          to-[#81bdaa]
-        " />
+        <div className="h-24 bg-linear-to-r from-(--theme-primary) to-(--theme-text-secondary)" />
         <div className="px-6 pb-6">
           {/* Avatar */}
           <div className="flex items-end -mt-12 mb-6">
             <div className="relative">
-              <div className="
-                w-24 
-                h-24 
-                rounded-full 
-                border-4 
-                border-white 
-                bg-[#81bdaa]/20 
-                overflow-hidden 
-                flex 
-                items-center 
-                justify-center 
-                shadow-md
-              ">
+              <div className="w-24 h-24 rounded-full border-4 border-(--theme-card-bg) bg-(--theme-text-secondary)/20 overflow-hidden flex items-center justify-center shadow-md">
                 {avatarPreview ? (
 
                   <img
@@ -291,11 +266,7 @@ export default function ProfilePage() {
                   />
                 ) : (
 
-                  <span className="
-                    text-2xl 
-                    font-bold 
-                    text-[#076648]
-                  ">
+                  <span className="text-2xl font-bold text-(--theme-text-primary)">
                     {initials || "?"}
                   </span>
 
@@ -312,19 +283,7 @@ export default function ProfilePage() {
                 onClick={() =>
                   fileInputRef.current?.click()
                 }
-                className="
-                  absolute 
-                  bottom-0 
-                  right-0 
-                  w-8 
-                  h-8 
-                  rounded-full 
-                  bg-[#076648] 
-                  text-white 
-                  flex 
-                  items-center 
-                  justify-center
-                "
+                className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-(--theme-primary) text-(--theme-text-inverse) flex items-center justify-center"
               >
 
                 <Camera size={16}/>
@@ -357,20 +316,13 @@ export default function ProfilePage() {
             <div className="ml-4 pb-1">
 
 
-              <p className="
-                text-sm 
-                font-medium 
-                text-[#076648]
-              ">
+              <p className="text-sm font-medium text-(--theme-text-primary)">
                 {formData.firstname} {formData.lastname}
               </p>
 
 
 
-              <p className="
-                text-xs 
-                text-[#076648]/60
-              ">
+              <p className="text-xs text-(--theme-text-secondary)">
                 {formData.email}
               </p>
 
@@ -387,12 +339,7 @@ export default function ProfilePage() {
 
 
           {/* Champs */}
-          <div className="
-            grid 
-            grid-cols-1 
-            sm:grid-cols-2 
-            gap-4
-          ">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
 
 
@@ -400,11 +347,7 @@ export default function ProfilePage() {
             <div className="flex flex-col gap-1">
 
 
-              <label className="
-                text-sm 
-                font-semibold 
-                text-[#076648]
-              ">
+              <label className="text-sm font-semibold text-(--theme-text-primary)">
                 Prénom
               </label>
 
@@ -421,23 +364,11 @@ export default function ProfilePage() {
                 onChange={handleChange}
 
 
-                className={`
-                  w-full
-                  px-4
-                  py-3
-                  rounded-lg
-                  border
-                  bg-[#fcfefd]
-                  text-[#076648]
-                  outline-none
-
-                  ${
+                className={`w-full px-4 py-3 rounded-lg border bg-(--theme-input-bg) text-(--theme-text-primary) outline-none ${
                     errors.firstname
-                    ? "border-red-500"
-                    : "border-[#81bdaa]/60"
-                  }
-
-                `}
+                    ? "border-(--theme-error)"
+                    : "border-(--theme-border-strong)"
+                  }`}
 
               />
 
@@ -445,7 +376,7 @@ export default function ProfilePage() {
 
               {errors.firstname && (
 
-                <p className="text-xs text-red-500">
+                <p className="text-xs text-(--theme-error)">
 
                   {errors.firstname}
 
@@ -465,11 +396,7 @@ export default function ProfilePage() {
             <div className="flex flex-col gap-1">
 
 
-              <label className="
-                text-sm 
-                font-semibold 
-                text-[#076648]
-              ">
+              <label className="text-sm font-semibold text-(--theme-text-primary)">
                 Nom
               </label>
 
@@ -486,23 +413,11 @@ export default function ProfilePage() {
                 onChange={handleChange}
 
 
-                className={`
-                  w-full
-                  px-4
-                  py-3
-                  rounded-lg
-                  border
-                  bg-[#fcfefd]
-                  text-[#076648]
-                  outline-none
-
-                  ${
+                className={`w-full px-4 py-3 rounded-lg border bg-(--theme-input-bg) text-(--theme-text-primary) outline-none ${
                     errors.lastname
-                    ? "border-red-500"
-                    : "border-[#81bdaa]/60"
-                  }
-
-                `}
+                    ? "border-(--theme-error)"
+                    : "border-(--theme-border-strong)"
+                  }`}
 
               />
 
@@ -510,7 +425,7 @@ export default function ProfilePage() {
 
               {errors.lastname && (
 
-                <p className="text-xs text-red-500">
+                <p className="text-xs text-(--theme-error)">
 
                   {errors.lastname}
 
@@ -527,19 +442,10 @@ export default function ProfilePage() {
 
 
             {/* Email */}
-            <div className="
-              flex 
-              flex-col 
-              gap-1 
-              sm:col-span-2
-            ">
+            <div className="flex flex-col gap-1 sm:col-span-2">
 
 
-              <label className="
-                text-sm 
-                font-semibold 
-                text-[#076648]
-              ">
+              <label className="text-sm font-semibold text-(--theme-text-primary)">
                 Email
               </label>
 
@@ -556,23 +462,11 @@ export default function ProfilePage() {
                 onChange={handleChange}
 
 
-                className={`
-                  w-full
-                  px-4
-                  py-3
-                  rounded-lg
-                  border
-                  bg-[#fcfefd]
-                  text-[#076648]
-                  outline-none
-
-                  ${
+                className={`w-full px-4 py-3 rounded-lg border bg-(--theme-input-bg) text-(--theme-text-primary) outline-none ${
                     errors.email
-                    ? "border-red-500"
-                    : "border-[#81bdaa]/60"
-                  }
-
-                `}
+                    ? "border-(--theme-error)"
+                    : "border-(--theme-border-strong)"
+                  }`}
 
               />
 
@@ -580,7 +474,7 @@ export default function ProfilePage() {
 
               {errors.email && (
 
-                <p className="text-xs text-red-500">
+                <p className="text-xs text-(--theme-error)">
 
                   {errors.email}
 
@@ -593,25 +487,17 @@ export default function ProfilePage() {
             </div>
 
 
-
           </div>
                     {/* Message succès / erreur */}
 
           {message && (
 
             <p
-              className={`
-                mt-4 
-                text-sm 
-                font-medium
-
-                ${
+              className={`mt-4 text-sm font-medium ${
                   message.type === "success"
-                    ? "text-[#076648]"
-                    : "text-red-500"
-                }
-
-              `}
+                    ? "text-(--theme-primary)"
+                    : "text-(--theme-error)"
+                }`}
             >
 
               {message.text}
@@ -631,22 +517,7 @@ export default function ProfilePage() {
 
             disabled={isLoading}
 
-            className="
-              mt-6
-              w-full
-              bg-[#076648]
-              text-white
-              py-3
-              rounded-lg
-              font-semibold
-              hover:bg-[#076648]/90
-              transition-colors
-              disabled:opacity-70
-              flex
-              items-center
-              justify-center
-              gap-2
-            "
+            className="mt-6 w-full bg-(--theme-primary) text-(--theme-text-inverse) py-3 rounded-lg font-semibold hover:bg-(--theme-primary-hover) transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
 
           >
 
