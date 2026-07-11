@@ -6,6 +6,7 @@ import { z } from 'zod';
 import api from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { User, Mail, Lock, EyeOff, Eye } from 'lucide-react';
+import { useAuthStore } from '@/lib/stores/auth.store';
 
 const registerSchema = z.object({
   firstname: z.string().min(2, 'Le prénom doit contenir au moins 2 caractères'),
@@ -20,6 +21,7 @@ const registerSchema = z.object({
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
+  const setAuth = useAuthStore((state) => state.setAuth);
   const [formData, setFormData] = useState<RegisterFormData>({
     firstname: '',
     lastname: '',
@@ -67,9 +69,10 @@ export default function RegisterPage() {
     setIsLoading(true);
     try {
 
-      const response = await api.post('/auth/login', result.data);
+      const response = await api.post('/auth/register', result.data);
       const { accessToken, user } = response.data;
 
+      setAuth(user, accessToken);
       localStorage.setItem('accessToken', accessToken);
 
       switch (user.role) {
