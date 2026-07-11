@@ -10,7 +10,7 @@
   --theme-input-bg: #fcfefd;
   --theme-surface-muted: #fcfefd;
   --theme-text-primary: #076648;
-  --theme-text-secondary: #81bdaa;
+  --theme-text-secondary: #4b7566;
   --theme-text-inverse: #fcfefd;
   --theme-border: rgba(129, 189, 170, 0.3);
   --theme-border-strong: rgba(129, 189, 170, 0.6);
@@ -23,7 +23,7 @@
   --theme-sidebar-border: #2f2f2f;
   --theme-sidebar-muted: #9ca3af;
   --theme-progress-track: #f3f4f6;
-  --theme-muted: #9ca3af;
+  --theme-muted: #5b6472;
   --theme-shadow: rgba(7, 102, 72, 0.12);
 }
 
