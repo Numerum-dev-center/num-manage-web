@@ -10,6 +10,8 @@ import { useAuthStore } from '@/lib/stores/auth.store';
 import AuthLayout from '../components/auth-layout';
 import { getErrorMessage } from '@/lib/get-error-message';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+
 const loginSchema = z.object({
   email: z.string().email("Adresse email invalide"),
   password: z.string().min(1, "Le mot de passe est requis"),
@@ -132,6 +134,28 @@ export default function LoginPage() {
               {isLoading ? 'Loading...' : 'Sign In'}
             </button>
           </form>
+
+          <div className="relative flex items-center py-1">
+            <div className="grow border-t border-(--theme-border)"></div>
+            <span className="shrink-0 mx-4 text-(--theme-text-secondary) text-xs uppercase tracking-wider">or</span>
+            <div className="grow border-t border-(--theme-border)"></div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href = `${API_URL}/auth/google`;
+            }}
+            className="w-full bg-(--theme-card-bg) border border-(--theme-border-strong) text-(--theme-text-primary) py-3 rounded-lg font-medium hover:bg-(--theme-surface-muted) hover:border-(--theme-primary) transition-all flex items-center justify-center gap-2 shadow-sm"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="#EA4335" d="M12 5.04c1.64 0 3.12.56 4.28 1.67l3.2-3.2C17.52 1.58 14.97 1 12 1 7.35 1 3.4 3.65 1.5 7.5l3.6 2.8c.85-2.5 3.15-4.26 6.9-4.26z" />
+              <path fill="#4285F4" d="M23.5 12.25c0-.82-.07-1.6-.2-2.35H12v4.5h6.45c-.28 1.47-1.1 2.7-2.35 3.55l3.65 2.85c2.13-1.97 3.35-4.87 3.35-8.55z" />
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-1 7.28-2.66l-3.65-2.85c-1 .67-2.3 1.07-3.63 1.07-3.75 0-6.05-1.76-6.9-4.26H1.4v2.9C3.3 20.35 7.25 23 12 23z" />
+              <path fill="#FBBC05" d="M5.1 14.3c-.2-.6-.32-1.25-.32-1.9s.12-1.3.32-1.9V7.6H1.4C.5 9.4 0 11.4 0 13.5s.5 4.1 1.4 5.9l3.7-3.1z" />
+            </svg>
+            Continue with Google
+          </button>
 
           <p className="text-center text-sm text-(--theme-text-primary)">
             Don&apos;t have an account?{' '}

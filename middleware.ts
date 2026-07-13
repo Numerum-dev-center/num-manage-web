@@ -10,6 +10,7 @@ const PUBLIC_ROUTES = [
   "/auth/login",
   "/auth/register",
   "/auth/forgot-password",
+  "/auth/google", // point d'entrée + callback OAuth Google
   "/", // page d'accueil, si elle doit être publique
 ];
 
