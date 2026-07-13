@@ -1,11 +1,14 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Search, Bell, GraduationCap, Calendar, Megaphone, ClipboardList } from "lucide-react";
 import { useAuthStore } from "@/lib/stores/auth.store";
+import api from "@/lib/api";
+import type { Promotion } from "@/lib/types/promotion";
 
 const UPCOMING = [
-  { title: "Ma formation", icon: GraduationCap, sprint: "S3", description: "Vos promotions et modules apparaîtront ici." },
   { title: "Annonces", icon: Megaphone, sprint: "S5", description: "Les annonces de vos formateurs seront diffusées ici." },
   { title: "Présences", icon: Calendar, sprint: "S6", description: "Émargement et historique de présence par QR Code." },
   { title: "Projets", icon: ClipboardList, sprint: "S7", description: "Vos projets et rendus de soumissions." },
@@ -14,6 +17,14 @@ const UPCOMING = [
 export default function StudentDashboard() {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
+  const [promotion, setPromotion] = useState<Promotion | null | undefined>(undefined);
+
+  useEffect(() => {
+    api
+      .get<{ promotion: Promotion | null }>("/mon-espace/ma-promotion")
+      .then((response) => setPromotion(response.data.promotion))
+      .catch(() => setPromotion(null));
+  }, []);
 
   return (
     <div className="flex-1 flex overflow-hidden">
@@ -57,11 +68,24 @@ export default function StudentDashboard() {
 
         <div className="flex-1 bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl p-6 shadow-sm flex flex-col gap-4">
           <h2 className="text-lg font-bold text-(--theme-text-primary)">Mon parcours</h2>
-          <div className="flex-1 border border-dashed border-(--theme-border) rounded-xl flex items-center justify-center p-8 bg-(--theme-surface-muted)/50">
-            <p className="text-sm text-(--theme-text-secondary) italic text-center max-w-sm">
-              Aucune promotion ne vous est encore affectée. Cet espace affichera votre parcours de formation dès que votre formateur vous aura inscrit à une promotion.
-            </p>
-          </div>
+          {promotion ? (
+            <div className="flex-1 border border-(--theme-border) rounded-xl flex flex-col items-center justify-center gap-3 p-8">
+              <GraduationCap size={24} className="text-(--theme-primary)" />
+              <p className="text-sm font-semibold text-(--theme-text-primary)">{promotion.name}</p>
+              <Link
+                href="/dashboard/student/promotion"
+                className="text-xs font-semibold text-(--theme-primary) hover:underline"
+              >
+                Voir ma promotion →
+              </Link>
+            </div>
+          ) : (
+            <div className="flex-1 border border-dashed border-(--theme-border) rounded-xl flex items-center justify-center p-8 bg-(--theme-surface-muted)/50">
+              <p className="text-sm text-(--theme-text-secondary) italic text-center max-w-sm">
+                Aucune promotion ne vous est encore affectée. Cet espace affichera votre parcours de formation dès que votre formateur vous aura inscrit à une promotion.
+              </p>
+            </div>
+          )}
         </div>
       </main>
 
