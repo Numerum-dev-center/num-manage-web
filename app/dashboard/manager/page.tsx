@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Users, GraduationCap, ClipboardList, Megaphone } from "lucide-react";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import api from "@/lib/api";
@@ -11,7 +12,6 @@ interface ApiUser {
 }
 
 const UPCOMING = [
-  { title: "Mes promotions", sprint: "S3", description: "Créer et suivre mes promotions, affecter mes apprenants." },
   { title: "Annonces", sprint: "S5", description: "Publier des annonces à destination de mes promotions." },
   { title: "Présences", sprint: "S6", description: "Émarger mes séances par QR Code et suivre l'assiduité." },
   { title: "Projets & Évaluations", sprint: "S7", description: "Créer des projets, recevoir et corriger les soumissions." },
@@ -59,13 +59,16 @@ export default function FormateurDashboard() {
             {studentCount ?? "—"}
           </span>
         </div>
-        <div className="p-5 bg-(--theme-card-bg) border border-dashed border-(--theme-border) rounded-2xl flex flex-col gap-2 justify-center">
+        <Link
+          href="/dashboard/manager/promotions"
+          className="p-5 bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl flex flex-col gap-2 justify-center hover:border-(--theme-primary) transition-colors"
+        >
           <div className="flex items-center gap-2 text-(--theme-text-secondary)">
             <GraduationCap size={16} />
             <span className="text-xs font-bold uppercase tracking-wider">Mes promotions</span>
           </div>
-          <p className="text-xs text-(--theme-text-secondary)">À venir — Sprint S3</p>
-        </div>
+          <p className="text-xs text-(--theme-text-secondary)">Voir et gérer mes promotions →</p>
+        </Link>
         <div className="p-5 bg-(--theme-card-bg) border border-dashed border-(--theme-border) rounded-2xl flex flex-col gap-2 justify-center">
           <div className="flex items-center gap-2 text-(--theme-text-secondary)">
             <ClipboardList size={16} />

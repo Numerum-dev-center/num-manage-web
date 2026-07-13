@@ -55,6 +55,7 @@ function buildSidebarConfig(counts: { total: number; students: number } | null):
       searchPlaceholder: "Rechercher...",
       items: [
         { label: "Overview", icon: Grid, href: "/dashboard/student" },
+        { label: "Ma promotion", icon: GraduationCap, href: "/dashboard/student/promotion" },
         {
           label: "Ma formation",
           icon: BookOpen,
@@ -81,7 +82,7 @@ function buildSidebarConfig(counts: { total: number; students: number } | null):
           upcoming: true,
           badge: counts ? String(counts.students) : undefined,
         },
-        { label: "Mes promotions", icon: GraduationCap, upcoming: true },
+        { label: "Mes promotions", icon: GraduationCap, href: "/dashboard/manager/promotions" },
         { label: "Annonces", icon: Megaphone, upcoming: true },
         { label: "Présences", icon: Calendar, upcoming: true },
         { label: "Évaluations / Projets", icon: FileSpreadsheet, upcoming: true },
@@ -103,7 +104,7 @@ function buildSidebarConfig(counts: { total: number; students: number } | null):
           upcoming: true,
           badge: counts ? String(counts.total) : undefined,
         },
-        { label: "Promotions", icon: GraduationCap, upcoming: true },
+        { label: "Promotions", icon: GraduationCap, href: "/dashboard/admin/promotions" },
         { label: "Annonces", icon: Megaphone, upcoming: true },
         { label: "Présences", icon: Calendar, upcoming: true },
         { label: "Certificats", icon: Award, upcoming: true },

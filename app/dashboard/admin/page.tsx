@@ -12,7 +12,6 @@ interface ApiUser {
 }
 
 const UPCOMING = [
-  { title: "Promotions", sprint: "S3", description: "Création, archivage et affectation des apprenants aux promotions." },
   { title: "Annonces", sprint: "S5", description: "Diffusion d'annonces et notifications par email aux promotions." },
   { title: "Présences", sprint: "S6", description: "Émargement par QR Code signé et suivi de présence." },
   { title: "Certificats", sprint: "S9", description: "Génération de certificats PDF avec vérification publique par QR Code." },
