@@ -16,22 +16,28 @@ type CreatePromotionFormData = z.infer<typeof createPromotionSchema>;
 
 export default function PromotionsListView({ basePath }: { basePath: string }) {
   const [promotions, setPromotions] = useState<Promotion[] | null>(null);
+  const [showArchived, setShowArchived] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [formData, setFormData] = useState<CreatePromotionFormData>({ name: "", description: "" });
   const [errors, setErrors] = useState<{ name?: string }>({});
   const [isCreating, setIsCreating] = useState(false);
   const [showForm, setShowForm] = useState(false);
 
-  const loadPromotions = () => {
+  const loadPromotions = (includeArchived: boolean) => {
+    setPromotions(null);
     api
-      .get<Promotion[]>("/promotions", { params: { includeArchived: true } })
-      .then((response) => setPromotions(response.data))
+      .get<Promotion[]>("/promotions", { params: { includeArchived } })
+      // includeArchived=true renvoie actives + archivées : sur l'onglet "Archivées",
+      // on ne garde que celles qui le sont réellement.
+      .then((response) => {
+        setPromotions(includeArchived ? response.data.filter((p) => p.isArchived) : response.data);
+      })
       .catch((err) => setMessage({ type: "error", text: getErrorMessage(err) }));
   };
 
   useEffect(() => {
-    loadPromotions();
-  }, []);
+    loadPromotions(showArchived);
+  }, [showArchived]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -53,7 +59,7 @@ export default function PromotionsListView({ basePath }: { basePath: string }) {
       setFormData({ name: "", description: "" });
       setShowForm(false);
       setMessage({ type: "success", text: "Promotion créée avec succès" });
-      loadPromotions();
+      loadPromotions(showArchived);
     } catch (err) {
       setMessage({ type: "error", text: getErrorMessage(err) });
     } finally {
@@ -64,7 +70,8 @@ export default function PromotionsListView({ basePath }: { basePath: string }) {
   const handleArchive = async (id: string) => {
     try {
       await api.patch(`/promotions/${id}/archive`);
-      loadPromotions();
+      setMessage({ type: "success", text: "Promotion archivée : elle n'apparaît plus dans la liste active" });
+      loadPromotions(showArchived);
     } catch (err) {
       setMessage({ type: "error", text: getErrorMessage(err) });
     }
@@ -98,6 +105,31 @@ export default function PromotionsListView({ basePath }: { basePath: string }) {
           {message.text}
         </p>
       )}
+
+      <div className="flex items-center gap-2 border-b border-(--theme-border)">
+        <button
+          type="button"
+          onClick={() => setShowArchived(false)}
+          className={`px-4 py-2 text-sm font-semibold border-b-2 -mb-px transition-colors ${
+            !showArchived
+              ? "border-(--theme-primary) text-(--theme-text-primary)"
+              : "border-transparent text-(--theme-text-secondary) hover:text-(--theme-text-primary)"
+          }`}
+        >
+          Actives
+        </button>
+        <button
+          type="button"
+          onClick={() => setShowArchived(true)}
+          className={`px-4 py-2 text-sm font-semibold border-b-2 -mb-px transition-colors ${
+            showArchived
+              ? "border-(--theme-primary) text-(--theme-text-primary)"
+              : "border-transparent text-(--theme-text-secondary) hover:text-(--theme-text-primary)"
+          }`}
+        >
+          Archivées
+        </button>
+      </div>
 
       {showForm && (
         <form
@@ -141,7 +173,9 @@ export default function PromotionsListView({ basePath }: { basePath: string }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {promotions === null && <p className="text-sm text-(--theme-text-secondary)">Chargement...</p>}
         {promotions?.length === 0 && (
-          <p className="text-sm text-(--theme-text-secondary)">Aucune promotion pour le moment.</p>
+          <p className="text-sm text-(--theme-text-secondary)">
+            {showArchived ? "Aucune promotion archivée." : "Aucune promotion active pour le moment."}
+          </p>
         )}
         {promotions?.map((promotion) => (
           <Link
