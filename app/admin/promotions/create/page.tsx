@@ -186,7 +186,7 @@ export default function CreatePromotionPage() {
             {/* Champ : Capacité d'accueil */}
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-black uppercase tracking-wider text-[#81bdaa] flex items-center gap-1.5">
-                <Users size={14} /> Capacité maximum d'apprenants
+                <Users size={14} /> Capacité maximum d&apos;apprenants
               </label>
               <input 
                 type="number"

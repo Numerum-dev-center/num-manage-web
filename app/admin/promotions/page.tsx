@@ -207,7 +207,7 @@ export default function PromotionsPage() {
                   Confirmer la modification du statut ?
                 </h3>
                 <p className="text-xs text-[#81bdaa] mt-2 max-w-xs mx-auto leading-relaxed">
-                  Vous êtes sur le point de configurer la promotion <span className="font-bold text-[#076648] dark:text-[#fcfefd]">"{selectedPromo.name}"</span> comme <span className="font-black underline">{selectedPromo.status === 'Actif' ? 'Archivée' : 'Active'}</span>.
+                  Vous êtes sur le point de configurer la promotion <span className="font-bold text-[#076648] dark:text-[#fcfefd]">&quot;{selectedPromo.name}&quot;</span> comme <span className="font-black underline">{selectedPromo.status === 'Actif' ? 'Archivée' : 'Active'}</span>.
                 </p>
               </div>
             </div>

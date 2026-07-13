@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, use } from 'react';
-import { 
-  ArrowLeft, Award, BookOpen, Calendar, CheckCircle, 
-  Clock, Code2, FileText, Mail, ShieldAlert, Star, 
-  TrendingUp, User, MoreVertical, MessageSquare, Download
+import {
+  ArrowLeft, Award, Calendar, CheckCircle,
+  Clock, Code2, Mail,
+  TrendingUp, Download
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -151,7 +151,7 @@ export default function FicheApprenant({ params }: PageProps) {
                 <tr className="bg-[#fcfefd] dark:bg-[#032117] text-[#81bdaa] font-bold border-b border-[#81bdaa]/10">
                   <th className="p-4 px-6">Intitulé du projet</th>
                   <th className="p-4 px-6">Technologies</th>
-                  <th className="p-4 px-6">Statut d'approbation</th>
+                  <th className="p-4 px-6">Statut d&apos;approbation</th>
                   <th className="p-4 px-6 text-right">Note obtenue</th>
                 </tr>
               </thead>

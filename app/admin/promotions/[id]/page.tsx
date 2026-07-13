@@ -2,7 +2,7 @@
 
 import React, { useState, use } from 'react';
 import { 
-  ArrowLeft, Users, Plus, UserPlus, Search, 
+  ArrowLeft, Users, UserPlus, Search,
   Mail, Calendar, ShieldCheck, X, CheckCircle, AlertCircle 
 } from 'lucide-react';
 import Link from 'next/link';
@@ -153,7 +153,7 @@ export default function PromotionDetailsPage({ params }: PageProps) {
                   <th className="p-4 px-6">ID Apprenant</th>
                   <th className="p-4 px-6">Nom & Prénom</th>
                   <th className="p-4 px-6">Adresse Email</th>
-                  <th className="p-4 px-6">Date d'intégration</th>
+                  <th className="p-4 px-6">Date d&apos;intégration</th>
                   <th className="p-4 px-6">Statut</th>
                 </tr>
               </thead>
@@ -217,7 +217,7 @@ export default function PromotionDetailsPage({ params }: PageProps) {
               )}
 
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-black uppercase text-[#81bdaa]">Nom complet de l'étudiant</label>
+                <label className="text-[10px] font-black uppercase text-[#81bdaa]">Nom complet de l&apos;étudiant</label>
                 <input 
                   type="text" 
                   placeholder="Ex: Kouami Mensah"
@@ -250,7 +250,7 @@ export default function PromotionDetailsPage({ params }: PageProps) {
                   type="submit"
                   className="w-full py-2 bg-[#076648] text-white font-bold rounded-xl text-xs hover:opacity-90 transition-opacity"
                 >
-                  Valider l'inscription
+                  Valider l&apos;inscription
                 </button>
               </div>
 
