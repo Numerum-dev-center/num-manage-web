@@ -1,100 +1,94 @@
 
 "use client";
 
-import React,{ useState } from 'react';
-import { Search, Sun,Moon, Bell, LogOut, User } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Search, Sun, Moon, Bell, LogOut, User } from 'lucide-react';
+import { useAuthStore } from '@/lib/stores/auth.store';
+import { useRouter } from 'next/navigation';
 
-interface NavbarProps {
-  userName?: string;
-  onLogout?: () => void;
-}
 
-export default function Navbar({ userName = "Alexandre Silva", onLogout }: NavbarProps) {
-  
-  // Fonction de déconnexion par défaut si aucune n'est passée en prop
+export default function Navbar() {
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
   const [isDark, setIsDark] = useState(false);
+  const router = useRouter();
+  const activeSection = useMemo(() => {
+    if (!user) return 'student';
+    return user.role; // 'admin' | 'manager' | 'student'
+  }, [user]);
+
+  useEffect(() => {
+    const storedTheme = document.documentElement.getAttribute('data-theme');
+    setIsDark(storedTheme === 'dark');
+  }, []);
 
   const toggleTheme = () => {
     const nextTheme = !isDark;
     setIsDark(nextTheme);
-    if (nextTheme) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    document.documentElement.setAttribute('data-theme', nextTheme ? 'dark' : 'light');
   };
-  const handleDefaultLogout = () => {
-    console.log("Déconnexion de l'utilisateur...");
-    // Insère ici ta logique (ex: signOut() de NextAuth, cookies.remove, etc.)
+const handleLogout = async () => {
+      await logout();
+      router.push('/auth/login');
   };
 
-  // Style de soulignement au survol demandé
-  const hoverUnderlineStyle = "relative pb-1 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-[#ef4726] after:transition-all after:duration-300 group-hover:after:w-full cursor-pointer";
+  const hoverUnderlineStyle =
+    'relative pb-1 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-(--theme-accent) after:transition-all after:duration-300 group-hover:after:w-full cursor-pointer';
 
   return (
-    <header className="h-16 bg-white border-b border-[#81bdaa]/30 flex items-center justify-between px-8 shrink-0 w-full">
-      
+    <header className="h-16 bg-(--theme-card-bg) border-b border-(--theme-border) flex items-center justify-between px-8 shrink-0 w-full transition-colors duration-300">
+
       {/* Barre de recherche (Gauche) */}
       <div className="relative w-80">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#81bdaa]" size={16} />
-        <input 
-          type="text" 
-          placeholder="Search anything..." 
-          className="w-full bg-[#fcfefd]  text-[#076648] text-sm pl-9 pr-4 py-2 rounded-xl border border-[#81bdaa]/40 focus:border-[#076648] focus:bg-white outline-none transition-all placeholder-[#81bdaa]/70"
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-(--theme-text-secondary)" size={16} />
+        <input
+          type="text"
+          placeholder="Search anything..."
+          className="w-full bg-(--theme-input-bg) text-(--theme-text-primary) text-sm pl-9 pr-4 py-2 rounded-xl border border-(--theme-border) focus:border-(--theme-primary) focus:bg-(--theme-card-bg) outline-none transition-colors placeholder:text-(--theme-text-secondary) placeholder:opacity-70"
         />
       </div>
 
       {/* Zone Utilisateur & Actions (Droite) */}
       <div className="flex items-center gap-6">
-        
-        
-        {/* Icônes Utilitaires */}
         <div className="flex items-center gap-2">
-          <button 
+          <button
             onClick={toggleTheme}
-            className={`p-2 rounded-xl transition-all duration-300 transform active:scale-95 ${
-              isDark 
-                ? 'bg-[#076648] text-[#fcfefd] ring-1 ring-[#81bdaa]/30' 
-                : 'bg-transparent text-[#81bdaa] hover:bg-[#fcfefd] hover:text-[#076648]'
-            }`}
-            title={isDark ? "Passer au thème clair" : "Passer au thème sombre"}
+            className={`p-2 rounded-xl transition-all duration-300 transform active:scale-95 ${isDark
+                ? 'bg-(--theme-primary) text-(--theme-text-inverse) ring-1 ring-(--theme-border)'
+                : 'bg-transparent text-(--theme-text-secondary) hover:bg-(--theme-surface-muted) hover:text-(--theme-text-primary)'
+              }`}
+            title={isDark ? 'Passer au thème clair' : 'Passer au thème sombre'}
           >
-            {isDark ? (
-              <Moon size={18} className="animate-in fade-in zoom-in-75 duration-300" />
-            ) : (
-              <Sun size={18} className="animate-in fade-in zoom-in-75 duration-300" />
-            )}
+            {isDark ? <Moon size={18} /> : <Sun size={18} />}
           </button>
-          {/* Bouton cloche notification */}
-          <button className="p-2 rounded-xl hover:bg-[#fcfefd] text-[#81bdaa] hover:text-[#076648] relative transition-colors">
+          <button className="p-2 rounded-xl hover:bg-(--theme-surface-muted) text-(--theme-text-secondary) hover:text-(--theme-text-primary) relative transition-colors">
             <Bell size={18} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#ef4726] rounded-full" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-(--theme-accent) rounded-full" />
           </button>
         </div>
 
-        {/* Séparateur visuel */}
-        <div className="w-px h-6  bg-[#81bdaa]/30" />
+        <div className="w-px h-6 bg-(--theme-border)" />
 
         {/* Bloc Profil + Déconnexion (Réponse au Ticket #288) */}
         <div className="flex  items-center gap-4">
-          
+
           {/* Nom de l'utilisateur avec effet de soulignement au survol du groupe */}
           <div className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-full bg-[#076648]/10 border border-[#81bdaa]/40 flex items-center justify-center text-[#076648] font-bold text-sm shadow-inner shrink-0">
-              {userName.split(' ').map(n => n[0]).join('')}
+            <div className="w-9 h-9 rounded-full bg-(--theme-primary)/10 border border-(--theme-border) flex items-center justify-center text-(--theme-primary) font-bold text-sm shadow-inner shrink-0">
+              {user!.firstname.split(' ').map((n) => n[0]).join('')}
             </div>
             <div className="flex flex-col text-left">
-              <span className={`text-sm font-bold text-[#076648] ${hoverUnderlineStyle}`}>
-                {userName}
+              <span className={`text-sm font-bold text-(--theme-text-primary) ${hoverUnderlineStyle}`}>
+                {user!.firstname}
               </span>
-              <span className="text-[10px] text-[#81bdaa] font-medium uppercase tracking-wider">Connecté</span>
+              <span className="text-[10px] text-(--theme-text-secondary) font-medium uppercase tracking-wider">Connecté</span>
             </div>
           </div>
 
           {/* Bouton Déconnexion */}
-          <button 
-            onClick={onLogout || handleDefaultLogout}
-            className="p-2.5 rounded-xl bg-[#fcfefd] border border-[#ef4726]/20 text-[#ef4726] hover:bg-[#ef4726] hover:text-white transition-all duration-200 shadow-sm flex items-center justify-center gap-2 text-xs font-semibold group"
+          <button
+            onClick={ handleLogout}
+            className="p-2.5 rounded-xl bg-(--theme-surface-muted) border border-(--theme-border) text-(--theme-accent) hover:bg-(--theme-accent) hover:text-(--theme-text-inverse) transition-all duration-200 shadow-sm flex items-center justify-center gap-2 text-xs font-semibold group"
             title="Se déconnecter"
           >
             <LogOut size={16} className="group-hover:scale-105 transition-transform" />
