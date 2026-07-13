@@ -122,6 +122,7 @@ const ROLE_PROTECTED_ROUTES: Record<string, string[]> = {
   "/dashboard/admin": ["admin"],
   "/dashboard/manager": ["admin", "manager"],
   "/dashboard/student": ["student"],
+  "/admin": ["admin"],
 };
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
