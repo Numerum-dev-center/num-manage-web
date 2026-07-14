@@ -1,0 +1,98 @@
+{
+  "users": [
+    {
+      "id": "u-admin-1",
+      "firstname": "Admin",
+      "lastname": "Numerum",
+      "email": "admin@numerum.com",
+      "password": "Admin123!",
+      "role": "admin",
+      "isActive": true,
+      "isDeleted": false,
+      "phoneNumber": null,
+      "promotionId": null,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "u-manager-1",
+      "firstname": "Fatou",
+      "lastname": "Diallo",
+      "email": "manager@numerum.com",
+      "password": "Manager123!",
+      "role": "manager",
+      "isActive": true,
+      "isDeleted": false,
+      "phoneNumber": null,
+      "promotionId": null,
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "u-student-1",
+      "firstname": "Awa",
+      "lastname": "Ndiaye",
+      "email": "student@numerum.com",
+      "password": "Student123!",
+      "role": "student",
+      "isActive": true,
+      "isDeleted": false,
+      "phoneNumber": null,
+      "promotionId": "p-1",
+      "createdAt": "2026-01-05T00:00:00.000Z",
+      "updatedAt": "2026-01-05T00:00:00.000Z"
+    },
+    {
+      "id": "u-student-2",
+      "firstname": "Koffi",
+      "lastname": "Kouassi",
+      "email": "student2@numerum.com",
+      "password": "Student123!",
+      "role": "student",
+      "isActive": true,
+      "isDeleted": false,
+      "phoneNumber": null,
+      "promotionId": "p-1",
+      "createdAt": "2026-01-06T00:00:00.000Z",
+      "updatedAt": "2026-01-06T00:00:00.000Z"
+    },
+    {
+      "id": "u-student-3",
+      "firstname": "Léa",
+      "lastname": "Martin",
+      "email": "student3@numerum.com",
+      "password": "Student123!",
+      "role": "student",
+      "isActive": true,
+      "isDeleted": false,
+      "phoneNumber": null,
+      "promotionId": null,
+      "createdAt": "2026-01-07T00:00:00.000Z",
+      "updatedAt": "2026-01-07T00:00:00.000Z"
+    }
+  ],
+  "promotions": [
+    {
+      "id": "p-1",
+      "name": "Promotion 2026 - Fullstack",
+      "description": "Formation développement web full-stack",
+      "isArchived": false,
+      "startDate": "2026-01-12",
+      "endDate": "2026-12-19",
+      "formateurId": "u-manager-1",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "p-2",
+      "name": "Promotion 2025 - Data & IA",
+      "description": "Formation data science et intelligence artificielle",
+      "isArchived": true,
+      "startDate": "2025-01-10",
+      "endDate": "2025-12-15",
+      "formateurId": null,
+      "createdAt": "2025-01-01T00:00:00.000Z",
+      "updatedAt": "2025-01-01T00:00:00.000Z"
+    }
+  ]
+}

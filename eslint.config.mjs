@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Script Node autonome (mock API), en dehors de l'app Next.js.
+    "mock-server/**",
   ]),
 ]);
 
