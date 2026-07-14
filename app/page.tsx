@@ -193,21 +193,21 @@ export default function LandingPage() {
       {/* STATS IMPACT SECTION */}
       <section id="stats" className="py-20 bg-(--theme-primary)/5 border-y border-(--theme-border) px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          <div className="flex flex-col gap-1">
+          {/* <div className="flex flex-col gap-1">
             <span className="text-4xl sm:text-5xl font-black text-(--theme-accent)">+94%</span>
             <span className="text-xs font-bold uppercase tracking-widest text-(--theme-text-secondary)">Taux de complétion</span>
-          </div>
+          </div> */}
           <div className="flex flex-col gap-1">
-            <span className="text-4xl sm:text-5xl font-black text-(--theme-text-primary)">1,200+</span>
+            <span className="text-4xl sm:text-5xl font-black text-(--theme-text-primary)">20+</span>
             <span className="text-xs font-bold uppercase tracking-widest text-(--theme-text-secondary)">Apprenants actifs</span>
           </div>
           <div className="flex flex-col gap-1">
-            <span className="text-4xl sm:text-5xl font-black text-(--theme-accent)">5/5</span>
+            <span className="text-4xl sm:text-5xl font-black text-(--theme-accent)">4/5</span>
             <span className="text-xs font-bold uppercase tracking-widest text-(--theme-text-secondary)">Satisfaction Cursus</span>
           </div>
           <div className="flex flex-col gap-1">
-            <span className="text-4xl sm:text-5xl font-black text-(--theme-text-primary)">48h</span>
-            <span className="text-xs font-bold uppercase tracking-widest text-(--theme-text-secondary)">Délai max de Recrutement</span>
+            <span className="text-4xl sm:text-5xl font-black text-(--theme-text-primary)">3/7</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-(--theme-text-secondary)">Disponibilité</span>
           </div>
         </div>
       </section>
