@@ -50,5 +50,8 @@ export function middleware(request: NextRequest) {
 // Configuration : sur quelles routes ce middleware doit s'exécuter
 export const config = {
   // Applique le middleware à TOUT sauf les fichiers statiques Next.js internes
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  // et les assets publics (images, favicon, etc.) servis depuis /public
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|webp|avif|svg|ico)$).*)",
+  ],
 };

@@ -38,7 +38,7 @@
       "isActive": true,
       "isDeleted": false,
       "phoneNumber": null,
-      "promotionId": "p-1",
+      "promotionId": "p-1784040752435",
       "createdAt": "2026-01-05T00:00:00.000Z",
       "updatedAt": "2026-01-05T00:00:00.000Z"
     },
@@ -52,7 +52,7 @@
       "isActive": true,
       "isDeleted": false,
       "phoneNumber": null,
-      "promotionId": "p-1",
+      "promotionId": "p-1784040752435",
       "createdAt": "2026-01-06T00:00:00.000Z",
       "updatedAt": "2026-01-06T00:00:00.000Z"
     },
@@ -66,7 +66,7 @@
       "isActive": true,
       "isDeleted": false,
       "phoneNumber": null,
-      "promotionId": null,
+      "promotionId": "p-1784040752435",
       "createdAt": "2026-01-07T00:00:00.000Z",
       "updatedAt": "2026-01-07T00:00:00.000Z"
     }
@@ -93,6 +93,17 @@
       "formateurId": null,
       "createdAt": "2025-01-01T00:00:00.000Z",
       "updatedAt": "2025-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "p-1784040752435",
+      "description": "je mange le riz",
+      "isArchived": false,
+      "startDate": "2026-05-15",
+      "endDate": "2026-08-30",
+      "formateurId": "u-manager-1",
+      "createdAt": "2026-07-14T14:52:32.435Z",
+      "updatedAt": "2026-07-14T14:56:37.679Z",
+      "name": "Cohort 2026"
     }
   ]
 }
