@@ -9,10 +9,11 @@ import {
   Handshake, Target, Quote, Rocket
 } from 'lucide-react';
 import { siReact, siNextdotjs, siNestjs, siTypescript, siMysql, siTailwindcss, siDocker, siGit } from 'simple-icons';
+import ThemeToggle from '@/app/components/theme-toggle';
 
 function TechIcon({ path }: { path: string }) {
   return (
-    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current shrink-0">
+    <svg viewBox="0 0 24 24" className="w-7 h-7 fill-current shrink-0">
       <path d={path} />
     </svg>
   );
@@ -130,7 +131,8 @@ export default function LandingPage() {
           </nav>
 
           {/* Actions Cta */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle className={!scrolled ? '!text-white' : ''} />
 
             <button  onClick={() => router.push('/auth/register')} className="flex items-center gap-2 px-5 py-2.5 bg-(--theme-primary) text-(--theme-text-inverse) rounded-xl text-sm font-bold shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all">
               Inscription <ChevronRight size={16} />
@@ -141,9 +143,12 @@ export default function LandingPage() {
           </div>
 
           {/* Bouton Mobile */}
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className={`md:hidden p-2 transition-colors duration-500 ${scrolled || mobileMenuOpen ? 'text-(--theme-text-primary)' : 'text-white'}`}>
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="md:hidden flex items-center gap-1">
+            <ThemeToggle className={!scrolled ? '!text-white' : ''} />
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className={`p-2 transition-colors duration-500 ${scrolled || mobileMenuOpen ? 'text-(--theme-text-primary)' : 'text-white'}`}>
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* Menu Mobile */}
@@ -167,7 +172,7 @@ export default function LandingPage() {
           fill
           preload
           sizes="100vw"
-          className="object-cover"
+          className="object-cover animate-ken-burns"
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/15 to-black/55" />
 
@@ -185,12 +190,12 @@ export default function LandingPage() {
               Former des développeurs <span className="text-(--theme-accent)">prêts pour l&apos;entreprise</span>, dès le premier stage.
             </h1>
 
-            <div className="w-full lg:w-auto lg:max-w-sm bg-(--theme-card-bg)/95 backdrop-blur rounded-2xl p-5 sm:p-6 shadow-xl shrink-0">
-              <p className="text-sm text-(--theme-text-secondary) leading-relaxed">
+            <div className="w-full lg:w-auto lg:max-w-sm bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 sm:p-6 shadow-xl shrink-0">
+              <p className="text-sm text-white/85 leading-relaxed">
                 Nos apprenants pratiquent les outils et méthodes utilisés en entreprise&nbsp;: revue de code, CI/CD, travail d&apos;équipe agile.
               </p>
               <div className="mt-5 flex flex-col sm:flex-row lg:flex-col gap-3">
-                <a href="#programmes" className="flex-1 px-5 py-3 border-2 border-(--theme-border-strong) text-(--theme-text-primary) font-bold rounded-xl text-sm text-center hover:bg-(--theme-primary)/5 transition-all">
+                <a href="#programmes" className="flex-1 px-5 py-3 border-2 border-white/30 text-white font-bold rounded-xl text-sm text-center hover:bg-white/10 transition-all">
                   Voir les parcours
                 </a>
                 <button onClick={() => router.push('/auth/register')} className="flex-1 px-5 py-3 bg-(--theme-accent) text-(--theme-text-inverse) font-bold rounded-xl text-sm shadow-lg shadow-(--theme-accent)/30 hover:bg-(--theme-accent)/90 transition-all flex items-center justify-center gap-2 group">
@@ -215,10 +220,10 @@ export default function LandingPage() {
               <div
                 key={`${tech.name}-${i}`}
                 style={{ '--brand': `#${tech.icon.hex}` } as React.CSSProperties}
-                className="flex items-center gap-2.5 px-5 py-2.5 rounded-full border border-(--theme-border) bg-(--theme-card-bg) shrink-0 text-(--theme-text-primary)/60 transition-colors duration-300 hover:text-[var(--brand)] hover:border-(--theme-border-strong)"
+                className="flex items-center gap-3 px-5 py-3 rounded-full border border-(--theme-border) bg-(--theme-card-bg) shrink-0 shadow-sm text-[var(--brand)] hover:text-(--theme-text-primary)/25 transition-colors duration-300"
               >
                 <TechIcon path={tech.icon.path} />
-                <span className="text-sm font-bold tracking-tight whitespace-nowrap">{tech.name}</span>
+                <span className="text-[11px] font-semibold text-(--theme-text-secondary)/80 tracking-wide whitespace-nowrap">{tech.name}</span>
               </div>
             ))}
           </div>
@@ -301,13 +306,26 @@ export default function LandingPage() {
       </section>
 
       {/* BENTO GRID SECTION */}
-      <section id="bento" className="py-20 px-6 max-w-7xl mx-auto">
-        <Reveal className="flex flex-col items-center text-center mb-16">
-          <h2 className="text-3xl sm:text-5xl font-black tracking-tight"><span className={hoverUnderlineStyle}>Une infrastructure, deux piliers</span></h2>
-          <p className="text-sm text-(--theme-text-secondary) mt-2">Découvrez l&apos;organisation en bento box de notre écosystème connecté.</p>
-        </Reveal>
+      <section id="bento" className="relative py-20 overflow-hidden">
+        {/* Fond photo fixe (effet parallaxe) — position fixed, rognée par le overflow-hidden de la section */}
+        <div className="fixed inset-0 -z-20 pointer-events-none">
+          <Image
+            src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1600&q=70&fit=crop"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
+        <div className="absolute inset-0 -z-10 bg-(--theme-page-bg)/40" />
 
-        <Reveal delay={100} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="relative max-w-7xl mx-auto px-6">
+          <Reveal className="flex flex-col items-center text-center mb-16">
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight"><span className={hoverUnderlineStyle}>Une infrastructure, deux piliers</span></h2>
+            <p className="text-sm text-(--theme-text-secondary) mt-2">Découvrez l&apos;organisation en bento box de notre écosystème connecté.</p>
+          </Reveal>
+
+          <Reveal delay={100} className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
           {/* Bento Box 1: Espace Apprenant */}
           <div className="md:col-span-2 bg-(--theme-card-bg) border border-(--theme-border) rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden group hover:border-(--theme-primary) transition-all shadow-sm">
@@ -373,7 +391,8 @@ export default function LandingPage() {
             </div>
           </div>
 
-        </Reveal>
+          </Reveal>
+        </div>
       </section>
 
       {/* STATS IMPACT SECTION */}
@@ -425,7 +444,8 @@ export default function LandingPage() {
       {/* FINAL CALL TO ACTION (CTA) */}
       <section className="py-24 px-6 max-w-5xl mx-auto text-center relative">
         <Reveal className="p-8 sm:p-14 bg-linear-to-br from-(--theme-primary) to-(--theme-primary-hover) text-(--theme-text-inverse) rounded-3xl border border-(--theme-border) relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-(--theme-accent)/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -top-10 -right-10 w-72 h-72 bg-(--theme-accent)/25 blob-2 blur-3xl pointer-events-none -z-10" />
+          <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-(--theme-text-inverse)/10 blob-1 blur-3xl pointer-events-none -z-10" />
 
           <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
             Prêt à transformer <br />votre ingénierie ?
@@ -443,10 +463,10 @@ export default function LandingPage() {
             </button>
           </div>
 
-          <div className="mt-10 flex flex-wrap justify-center gap-6 text-xs text-(--theme-text-inverse)/80 font-medium">
-            <span className="flex items-center gap-1.5"><CheckCircle2 size={14} className="text-(--theme-accent)" /> Aucun engagement</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 size={14} className="text-(--theme-accent)" /> SSO & Multi-rôles natif</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 size={14} className="text-(--theme-accent)" /> Conforme Tailwind v4</span>
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <span className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-(--theme-text-inverse)/10 border border-(--theme-text-inverse)/15 text-xs text-(--theme-text-inverse)/85 font-semibold"><CheckCircle2 size={14} className="text-(--theme-accent)" /> Aucun engagement</span>
+            <span className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-(--theme-text-inverse)/10 border border-(--theme-text-inverse)/15 text-xs text-(--theme-text-inverse)/85 font-semibold"><CheckCircle2 size={14} className="text-(--theme-accent)" /> SSO & Multi-rôles natif</span>
+            <span className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-(--theme-text-inverse)/10 border border-(--theme-text-inverse)/15 text-xs text-(--theme-text-inverse)/85 font-semibold"><CheckCircle2 size={14} className="text-(--theme-accent)" /> Conforme Tailwind v4</span>
           </div>
         </Reveal>
       </section>
