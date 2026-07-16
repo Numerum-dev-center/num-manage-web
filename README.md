@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# num-manage-web
 
-## Getting Started
+Frontend Next.js (App Router) du projet Numerum Dev Center.
 
-First, run the development server:
+## Prérequis
+
+- Node.js ≥ 18
+- pnpm ≥ 9 (`npm install -g pnpm` si besoin — le projet refuse npm/yarn via `preinstall`)
+
+## Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Configuration
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Copiez `.env.example` en `.env` :
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cp .env.example .env
+```
 
-## Learn More
+```
+NEXT_PUBLIC_API_URL=http://localhost:3001
+```
 
-To learn more about Next.js, take a look at the following resources:
+Ne changez pas cette valeur — que vous utilisiez le mock ou la vraie API, elles
+écoutent toutes les deux sur le port `3001` (une seule à la fois, voir plus bas).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Lancer le projet
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Option A — En autonomie, sans backend réel (recommandé si vous n'avez pas
+l'API NestJS / MySQL sous la main)
 
-## Deploy on Vercel
+Deux terminaux :
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+# Terminal 1 : API simulée (json-server)
+pnpm run mock-api
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Terminal 2 : le site
+pnpm run dev
+```
+
+Ouvrez [http://localhost:3000](http://localhost:3000). Tout fonctionne :
+connexion, dashboards par rôle, gestion des promotions et des apprenants,
+espace apprenant. Les données vivent dans `mock-server/db.json` et vos
+modifications (créer une promotion, affecter un apprenant...) y sont
+sauvegardées automatiquement — donc conservées d'un lancement à l'autre.
+
+**Comptes de test :**
+
+| Rôle      | Email                | Mot de passe |
+|-----------|-----------------------|--------------|
+| Admin     | admin@numerum.com     | Admin123!    |
+| Formateur | manager@numerum.com   | Manager123!  |
+| Apprenant | student@numerum.com   | Student123!  |
+
+Détails complets (ce qui est simulé, réinitialiser les données, cas du bouton
+Google) : [`mock-server/README.md`](./mock-server/README.md).
+
+### Option B — Avec la vraie API (num-manage-api + MySQL en local)
+
+```bash
+# Dans num-manage-api : pnpm run start:dev (voir son propre README)
+# Ici :
+pnpm run dev
+```
+
+Ne lancez **jamais** `pnpm run mock-api` et la vraie API en même temps : elles
+utilisent le même port `3001` et se marchent dessus.
+
+## Scripts disponibles
+
+| Commande            | Effet                                              |
+|----------------------|-----------------------------------------------------|
+| `pnpm run dev`       | Lance le site en mode développement (port 3000)     |
+| `pnpm run mock-api`  | Lance l'API simulée pour travailler hors-ligne       |
+| `pnpm run build`     | Build de production                                  |
+| `pnpm run start`     | Sert le build de production                          |
+| `pnpm run lint`      | Vérifie le code (ESLint)                             |
+
+## Problèmes fréquents
+
+- **"Failed to fetch" / rien ne se connecte** : vérifiez qu'un des deux
+  serveurs API (`pnpm run mock-api` OU la vraie API) tourne bien sur le port
+  `3001`, et qu'aucun des deux ne tourne déjà dessus par ailleurs
+  (`Get-Process node` sous PowerShell pour voir ce qui écoute).
+- **Redirigé vers `/auth/login` en boucle** : le cookie `refreshToken` n'a pas
+  été posé — reconnectez-vous ; si ça persiste, videz les cookies de
+  `localhost` pour le site.
+- **Après avoir tiré (`git pull`) des changements de routes** : videz le
+  cache Next.js si le build ou le dev server se comporte bizarrement :
+  `rm -rf .next` (ou supprimez le dossier `.next` à la main sous Windows) puis
+  relancez.
+- **Repartir d'un jeu de données propre côté mock** :
+  `git checkout -- mock-server/db.json`.
+
+## Pour aller plus loin
+
+L'architecture du projet (routing, store d'auth, styling, conventions) est
+documentée dans [`CLAUDE.md`](./CLAUDE.md).

@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import PromotionDetailView from "@/app/components/promotions/promotion-detail-view";
 
-export default function AdminPromotionDetailPage() {
+export default function ManagerPromotionDetailPage() {
   const params = useParams<{ id: string }>();
-  return <PromotionDetailView basePath="/admin/promotions" promotionId={params.id} />;
+  return <PromotionDetailView basePath="/dashboard/manager/promotions" promotionId={params.id} />;
 }

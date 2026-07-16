@@ -7,6 +7,10 @@ import api from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, EyeOff, Eye } from 'lucide-react';
 import { useAuthStore } from '@/lib/stores/auth.store';
+import AuthLayout from '../components/auth-layout';
+import { getErrorMessage } from '@/lib/get-error-message';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 
 const loginSchema = z.object({
   email: z.string().email("Adresse email invalide"),
@@ -66,29 +70,16 @@ export default function LoginPage() {
         default:
           router.push('/');
       }
-    } catch (err: any) {
-      const data = err.response?.data;
-      const message = Array.isArray(data?.message)
-        ? data.message[0]
-        : data?.message ?? 'Une erreur est survenue';
-      setErrors({ email: message });
+    } catch (err) {
+      setErrors({ email: getErrorMessage(err) });
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className=" min-h-screen  items-center justify-center p-6 max-w-2xl mx-auto" >
-      <button className='px-6 py-2' onClick={() => router.back()}>
-         ← Retour
-      </button>
-      <div className=" w-full  items-center justify-center bg-(--theme-page-bg) p-4">
-        <div className="w-full max-w-md p-8 rounded-2xl border border-(--theme-border) bg-(--theme-card-bg) shadow-sm flex flex-col gap-6">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-(--theme-text-primary)">Welcome Back</h1>
-            <p className="text-sm text-(--theme-text-secondary) mt-1">Log in to your account</p>
-          </div>
-
+    <AuthLayout title="Welcome Back" subtitle="Log in to your account">
+      <div className="w-full p-8 rounded-2xl border border-(--theme-border) bg-(--theme-card-bg) shadow-sm flex flex-col gap-6">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
               <label className="text-sm font-semibold text-(--theme-text-primary)">Email</label>
@@ -150,7 +141,13 @@ export default function LoginPage() {
             <div className="grow border-t border-(--theme-border)"></div>
           </div>
 
-          <button className="w-full bg-(--theme-card-bg) border border-(--theme-border-strong) text-(--theme-text-primary) py-3 rounded-lg font-medium hover:bg-(--theme-surface-muted) hover:border-(--theme-primary) transition-all flex items-center justify-center gap-2 shadow-sm">
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href = `${API_URL}/auth/google`;
+            }}
+            className="w-full bg-(--theme-card-bg) border border-(--theme-border-strong) text-(--theme-text-primary) py-3 rounded-lg font-medium hover:bg-(--theme-surface-muted) hover:border-(--theme-primary) transition-all flex items-center justify-center gap-2 shadow-sm"
+          >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#EA4335" d="M12 5.04c1.64 0 3.12.56 4.28 1.67l3.2-3.2C17.52 1.58 14.97 1 12 1 7.35 1 3.4 3.65 1.5 7.5l3.6 2.8c.85-2.5 3.15-4.26 6.9-4.26z" />
               <path fill="#4285F4" d="M23.5 12.25c0-.82-.07-1.6-.2-2.35H12v4.5h6.45c-.28 1.47-1.1 2.7-2.35 3.55l3.65 2.85c2.13-1.97 3.35-4.87 3.35-8.55z" />
@@ -161,13 +158,12 @@ export default function LoginPage() {
           </button>
 
           <p className="text-center text-sm text-(--theme-text-primary)">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/auth/register" className="text-(--theme-accent) font-semibold hover:underline">
               Sign up
             </Link>
           </p>
-        </div>
       </div>
-    </div>
+    </AuthLayout>
   );
 }

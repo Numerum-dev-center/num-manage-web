@@ -7,15 +7,15 @@ import api from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { User, Mail, Lock, EyeOff, Eye } from 'lucide-react';
 import { useAuthStore } from '@/lib/stores/auth.store';
+import AuthLayout from '../components/auth-layout';
+import { getErrorMessage } from '@/lib/get-error-message';
 
 const registerSchema = z.object({
   firstname: z.string().min(2, 'Le prénom doit contenir au moins 2 caractères'),
   lastname: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
   email: z.string().email('Adresse email invalide'),
   password: z.string().min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
-  role: z.enum(['student', 'manager'], {
-    errorMap: () => ({ message: 'Veuillez sélectionner un rôle valide' }),
-  }),
+  role: z.enum(['student', 'manager'], 'Veuillez sélectionner un rôle valide'),
 });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
@@ -92,32 +92,16 @@ export default function RegisterPage() {
           router.push('/');
       }
 
-    } catch (err: any) {
-      const error = err.response?.data;
-      const message = Array.isArray(error?.message)
-        ? error.message[0]
-        : error?.message?.message ?? error?.message ?? 'Une erreur est survenue';
-
-      setErrors({
-        email: message,
-      });
+    } catch (err) {
+      setErrors({ email: getErrorMessage(err) });
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className=" min-h-screen  items-center justify-center p-6 max-w-2xl mx-auto" >
-      <button className='px-6 py-2' onClick={() => router.back()}>
-        ← Retour
-      </button>
-      <div className="min-h-screen w-full flex items-center justify-center bg-(--theme-page-bg) p-4">
-        <div className="w-full max-w-md p-8 rounded-2xl border border-(--theme-border) bg-(--theme-card-bg) shadow-sm flex flex-col gap-6">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-(--theme-text-primary)">Create an account</h1>
-            <p className="text-sm text-(--theme-text-secondary) mt-1">Join the platform today</p>
-          </div>
-
+    <AuthLayout title="Create an account" subtitle="Join the platform today">
+      <div className="w-full p-8 rounded-2xl border border-(--theme-border) bg-(--theme-card-bg) shadow-sm flex flex-col gap-6">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-semibold text-(--theme-text-primary)">Join as</label>
@@ -240,8 +224,7 @@ export default function RegisterPage() {
               Log in
             </Link>
           </p>
-        </div>
       </div>
-    </div>
+    </AuthLayout>
   );
 }
