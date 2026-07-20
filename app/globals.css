@@ -153,3 +153,26 @@ body {
   }
 }
 
+/* Ensure utility classes like `text-white` remain readable in both themes.
+   Many components use `text-white` for contrast on dark backgrounds; however
+   when rendered on light backgrounds this becomes invisible. Map that
+   utility to theme-aware colors to preserve intent while improving contrast. */
+:root .text-white {
+  color: var(--theme-text-primary) !important;
+}
+
+/* In dark theme, keep the original white (or inverse) color for `.text-white`. */
+[data-theme="dark"] .text-white,
+:root[data-theme="dark"] .text-white,
+.dark .text-white {
+  color: var(--theme-text-inverse) !important;
+}
+
+/* Also handle semi-transparent white utilities if present (e.g. text-white/90) */
+:root [class*="text-white/"] {
+  color: var(--theme-text-primary) !important;
+}
+[data-theme="dark"] [class*="text-white/"] {
+  color: var(--theme-text-inverse) !important;
+}
+
