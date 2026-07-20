@@ -21,6 +21,15 @@ function hasAllowedExtension(filename: string): boolean {
   return ALLOWED_EXTENSIONS.some((ext) => lower.endsWith(ext));
 }
 
+function isLikelyUrl(value: string): boolean {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 export default function RessourcesManagerView() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [ressources, setRessources] = useState<Ressource[] | null>(null);
@@ -28,8 +37,11 @@ export default function RessourcesManagerView() {
   const [promotionFilter, setPromotionFilter] = useState("");
   const [selectedPromotionId, setSelectedPromotionId] = useState("");
   const [title, setTitle] = useState("");
+  const [depositMode, setDepositMode] = useState<"file" | "lien">("file");
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
+  const [url, setUrl] = useState("");
+  const [urlError, setUrlError] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
@@ -91,15 +103,24 @@ export default function RessourcesManagerView() {
       setMessage({ type: "error", text: "Sélectionnez une promotion cible" });
       return;
     }
-    if (!file) {
-      setMessage({ type: "error", text: "Sélectionnez un fichier PDF ou ZIP (10 Mo max)" });
-      return;
-    }
 
     const formData = new FormData();
     formData.append("promotionId", selectedPromotionId);
     if (title.trim()) formData.append("title", title.trim());
-    formData.append("file", file);
+
+    if (depositMode === "file") {
+      if (!file) {
+        setMessage({ type: "error", text: "Sélectionnez un fichier PDF ou ZIP (10 Mo max)" });
+        return;
+      }
+      formData.append("file", file);
+    } else {
+      if (!url.trim() || !isLikelyUrl(url.trim())) {
+        setUrlError("Saisissez un lien valide (http:// ou https://)");
+        return;
+      }
+      formData.append("url", url.trim());
+    }
 
     setIsSubmitting(true);
     try {
@@ -109,6 +130,7 @@ export default function RessourcesManagerView() {
       setMessage({ type: "success", text: "Ressource envoyée avec succès" });
       setTitle("");
       setFile(null);
+      setUrl("");
       if (fileInputRef.current) fileInputRef.current.value = "";
       loadRessources();
     } catch (err) {
@@ -199,21 +221,72 @@ export default function RessourcesManagerView() {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-semibold text-(--theme-text-primary)">Fichier (PDF ou ZIP, 10 Mo max)</label>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".pdf,.zip"
-            onChange={handleFileChange}
-            className="w-full text-sm text-(--theme-text-secondary) file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-(--theme-primary) file:text-(--theme-text-inverse) file:font-semibold file:cursor-pointer"
-          />
-          {fileError && <p className="text-xs text-(--theme-error)">{fileError}</p>}
-          {file && !fileError && (
-            <p className="text-xs text-(--theme-text-secondary)">
-              {file.name} — {formatSize(file.size)}
-            </p>
-          )}
+          <label className="text-sm font-semibold text-(--theme-text-primary)">Type de ressource</label>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setDepositMode("file");
+                setUrlError(null);
+              }}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${
+                depositMode === "file"
+                  ? "bg-(--theme-primary) text-(--theme-text-inverse) border-(--theme-primary)"
+                  : "bg-(--theme-input-bg) text-(--theme-text-secondary) border-(--theme-border-strong)"
+              }`}
+            >
+              Fichier
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setDepositMode("lien");
+                setFileError(null);
+              }}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${
+                depositMode === "lien"
+                  ? "bg-(--theme-primary) text-(--theme-text-inverse) border-(--theme-primary)"
+                  : "bg-(--theme-input-bg) text-(--theme-text-secondary) border-(--theme-border-strong)"
+              }`}
+            >
+              Lien externe
+            </button>
+          </div>
         </div>
+
+        {depositMode === "file" ? (
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-(--theme-text-primary)">Fichier (PDF ou ZIP, 10 Mo max)</label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.zip"
+              onChange={handleFileChange}
+              className="w-full text-sm text-(--theme-text-secondary) file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-(--theme-primary) file:text-(--theme-text-inverse) file:font-semibold file:cursor-pointer"
+            />
+            {fileError && <p className="text-xs text-(--theme-error)">{fileError}</p>}
+            {file && !fileError && (
+              <p className="text-xs text-(--theme-text-secondary)">
+                {file.name} — {formatSize(file.size)}
+              </p>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-(--theme-text-primary)">Lien externe</label>
+            <input
+              type="url"
+              value={url}
+              onChange={(e) => {
+                setUrl(e.target.value);
+                setUrlError(null);
+              }}
+              placeholder="https://..."
+              className="w-full px-4 py-3 rounded-lg border border-(--theme-border-strong) bg-(--theme-input-bg) text-(--theme-text-primary) outline-none"
+            />
+            {urlError && <p className="text-xs text-(--theme-error)">{urlError}</p>}
+          </div>
+        )}
 
         <button
           type="submit"
