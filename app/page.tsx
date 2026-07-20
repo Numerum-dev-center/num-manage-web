@@ -125,6 +125,7 @@ export default function LandingPage() {
           {/* Navigation Desktop */}
           <nav className={`hidden md:flex items-center gap-8 text-sm font-semibold transition-colors duration-500 ${scrolled ? 'text-(--theme-text-primary)/80' : 'text-white/90'}`}>
             <a href="#bento" className={hoverUnderlineStyle}>Plateforme</a>
+            <a href="/annonces" className={hoverUnderlineStyle}>Annonces</a>
             <a href="#programmes" className={hoverUnderlineStyle}>Parcours</a>
             <a href="#stats" className={hoverUnderlineStyle}>Impact</a>
             <a href="#temoignages" className={hoverUnderlineStyle}>Témoignages</a>
@@ -155,6 +156,7 @@ export default function LandingPage() {
         {mobileMenuOpen && (
           <div className="md:hidden w-full bg-(--theme-page-bg) border-b border-(--theme-border) p-6 flex flex-col gap-4 animate-fade-in">
             <a href="#bento" className="text-lg font-semibold">Plateforme</a>
+            <a href="/annonces" className="text-lg font-semibold">Annonces</a>
             <a href="#programmes" className="text-lg font-semibold">Parcours</a>
             <a href="#stats" className="text-lg font-semibold">Impact</a>
             <a href="#temoignages" className="text-lg font-semibold">Témoignages</a>
@@ -401,13 +403,13 @@ export default function LandingPage() {
           <div className="flex flex-col gap-1">
             <span className="text-4xl sm:text-5xl font-black text-(--theme-accent)">+94%</span>
             <span className="text-xs font-bold uppercase tracking-widest text-(--theme-text-secondary)">Taux de complétion</span>
-          </div>
+          </div> 
           <div className="flex flex-col gap-1">
-            <span className="text-4xl sm:text-5xl font-black text-(--theme-text-primary)">1,200+</span>
+            <span className="text-4xl sm:text-5xl font-black text-(--theme-text-primary)">20+</span>
             <span className="text-xs font-bold uppercase tracking-widest text-(--theme-text-secondary)">Apprenants actifs</span>
           </div>
           <div className="flex flex-col gap-1">
-            <span className="text-4xl sm:text-5xl font-black text-(--theme-accent)">5/5</span>
+            <span className="text-4xl sm:text-5xl font-black text-(--theme-accent)">4/5</span>
             <span className="text-xs font-bold uppercase tracking-widest text-(--theme-text-secondary)">Satisfaction Cursus</span>
           </div>
           <div className="flex flex-col gap-1">
