@@ -19,7 +19,7 @@ export default function RessourcesStudentView() {
 
   useEffect(() => {
     api
-      .get<Ressource[]>("/ressources/me")
+      .get<Ressource[]>("/mon-espace/ressources")
       .then((response) => setRessources(response.data))
       .catch((err) => {
         setRessources([]);
