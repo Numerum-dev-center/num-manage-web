@@ -9,6 +9,7 @@ import {
   ChevronRight,
   ClipboardList,
   FileSpreadsheet,
+  FileText,
   Grid,
   GraduationCap,
   HelpCircle,
@@ -56,6 +57,7 @@ function buildSidebarConfig(counts: { total: number; students: number } | null):
       items: [
         { label: "Overview", icon: Grid, href: "/dashboard/student" },
         { label: "Ma promotion", icon: GraduationCap, href: "/dashboard/student/promotion" },
+        { label: "Ressources", icon: FileText, href: "/dashboard/student/ressources" },
         {
           label: "Ma formation",
           icon: BookOpen,
@@ -83,6 +85,7 @@ function buildSidebarConfig(counts: { total: number; students: number } | null):
           badge: counts ? String(counts.students) : undefined,
         },
         { label: "Mes promotions", icon: GraduationCap, href: "/dashboard/manager/promotions" },
+        { label: "Ressources", icon: FileText, href: "/dashboard/manager/ressources" },
         { label: "Annonces", icon: Megaphone, upcoming: true },
         { label: "Présences", icon: Calendar, upcoming: true },
         { label: "Évaluations / Projets", icon: FileSpreadsheet, upcoming: true },
@@ -106,6 +109,7 @@ function buildSidebarConfig(counts: { total: number; students: number } | null):
         },
         { label: "Promotions", icon: GraduationCap, href: "/admin/promotions" },
         { label: "Apprenants", icon: GraduationCap, href: "/admin/apprenants" },
+        { label: "Ressources", icon: FileText, href: "/admin/ressources" },
         { label: "Annonces", icon: Megaphone, upcoming: true },
         { label: "Présences", icon: Calendar, upcoming: true },
         { label: "Certificats", icon: Award, upcoming: true },
