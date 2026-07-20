@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Download, FileArchive, FileText, Loader2, Trash2, UploadCloud } from "lucide-react";
+import { Download, FileArchive, FileText, Link2, Loader2, Trash2, UploadCloud } from "lucide-react";
 import api from "@/lib/api";
 import { getErrorMessage } from "@/lib/get-error-message";
-import type { Ressource } from "@/lib/types/ressource";
+import type { Ressource, RessourceType } from "@/lib/types/ressource";
 import type { Promotion } from "@/lib/types/promotion";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 Mo
@@ -35,6 +35,7 @@ export default function RessourcesManagerView() {
   const [ressources, setRessources] = useState<Ressource[] | null>(null);
   const [promotions, setPromotions] = useState<Promotion[] | null>(null);
   const [promotionFilter, setPromotionFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState<"" | RessourceType>("");
   const [selectedPromotionId, setSelectedPromotionId] = useState("");
   const [title, setTitle] = useState("");
   const [depositMode, setDepositMode] = useState<"file" | "lien">("file");
@@ -58,19 +59,25 @@ export default function RessourcesManagerView() {
     setRessources(null);
     api
       .get<Ressource[]>("/ressources", {
-        params: promotionFilter ? { promotionId: promotionFilter } : undefined,
+        params: {
+          ...(promotionFilter ? { promotionId: promotionFilter } : {}),
+          ...(typeFilter ? { type: typeFilter } : {}),
+        },
       })
       .then((response) => setRessources(response.data))
       .catch((err) => {
         setRessources([]);
         setMessage({ type: "error", text: getErrorMessage(err) });
       });
-  }, [promotionFilter]);
+  }, [promotionFilter, typeFilter]);
 
   const loadRessources = () => {
     api
       .get<Ressource[]>("/ressources", {
-        params: promotionFilter ? { promotionId: promotionFilter } : undefined,
+        params: {
+          ...(promotionFilter ? { promotionId: promotionFilter } : {}),
+          ...(typeFilter ? { type: typeFilter } : {}),
+        },
       })
       .then((response) => setRessources(response.data))
       .catch((err) => setMessage({ type: "error", text: getErrorMessage(err) }));
@@ -141,19 +148,23 @@ export default function RessourcesManagerView() {
   };
 
   const handleDownload = async (ressource: Ressource) => {
+    if (ressource.type === "lien") {
+      if (ressource.url) window.open(ressource.url, "_blank", "noopener,noreferrer");
+      return;
+    }
     setDownloadingId(ressource.id);
     try {
       const response = await api.get(`/ressources/${ressource.id}/download`, {
         responseType: "blob",
       });
-      const url = URL.createObjectURL(response.data as Blob);
+      const objectUrl = URL.createObjectURL(response.data as Blob);
       const link = document.createElement("a");
-      link.href = url;
-      link.download = ressource.filename;
+      link.href = objectUrl;
+      link.download = ressource.filename ?? ressource.title;
       document.body.appendChild(link);
       link.click();
       link.remove();
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(objectUrl);
     } catch (err) {
       setMessage({ type: "error", text: getErrorMessage(err) });
     } finally {
@@ -312,6 +323,18 @@ export default function RessourcesManagerView() {
             </option>
           ))}
         </select>
+
+        <label className="text-sm font-semibold text-(--theme-text-primary)">Type</label>
+        <select
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value as "" | RessourceType)}
+          className="px-3 py-2 rounded-lg border border-(--theme-border-strong) bg-(--theme-input-bg) text-(--theme-text-primary) text-sm outline-none"
+        >
+          <option value="">Tous les types</option>
+          <option value="pdf">PDF</option>
+          <option value="zip">ZIP</option>
+          <option value="lien">Lien</option>
+        </select>
       </div>
 
       <div className="bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl overflow-hidden">
@@ -335,16 +358,20 @@ export default function RessourcesManagerView() {
                 <tr key={ressource.id} className="border-b border-(--theme-border) last:border-0">
                   <td className="px-6 py-3">
                     <span className="flex items-center gap-2 text-(--theme-text-primary) font-medium">
-                      {ressource.mimeType === "application/pdf" ? (
+                      {ressource.type === "pdf" ? (
                         <FileText size={16} className="text-(--theme-accent) shrink-0" />
-                      ) : (
+                      ) : ressource.type === "zip" ? (
                         <FileArchive size={16} className="text-(--theme-accent) shrink-0" />
+                      ) : (
+                        <Link2 size={16} className="text-(--theme-accent) shrink-0" />
                       )}
                       {ressource.title}
                     </span>
                   </td>
                   <td className="px-6 py-3 text-(--theme-text-secondary)">{ressource.promotion?.name ?? "—"}</td>
-                  <td className="px-6 py-3 text-(--theme-text-secondary)">{formatSize(ressource.size)}</td>
+                  <td className="px-6 py-3 text-(--theme-text-secondary)">
+                    {ressource.size !== null ? formatSize(ressource.size) : "—"}
+                  </td>
                   <td className="px-6 py-3 text-(--theme-text-secondary)">
                     {ressource.uploadedBy ? `${ressource.uploadedBy.firstname} ${ressource.uploadedBy.lastname}` : "—"}
                   </td>
@@ -358,10 +385,12 @@ export default function RessourcesManagerView() {
                       >
                         {downloadingId === ressource.id ? (
                           <Loader2 size={14} className="animate-spin" />
+                        ) : ressource.type === "lien" ? (
+                          <Link2 size={14} />
                         ) : (
                           <Download size={14} />
                         )}
-                        Télécharger
+                        {ressource.type === "lien" ? "Ouvrir" : "Télécharger"}
                       </button>
                       <button
                         type="button"

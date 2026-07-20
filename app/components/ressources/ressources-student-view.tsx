@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Download, FileArchive, FileText, Loader2 } from "lucide-react";
+import { Download, FileArchive, FileText, Link2, Loader2 } from "lucide-react";
 import api from "@/lib/api";
 import { getErrorMessage } from "@/lib/get-error-message";
 import type { Ressource } from "@/lib/types/ressource";
@@ -28,20 +28,24 @@ export default function RessourcesStudentView() {
   }, []);
 
   const handleDownload = async (ressource: Ressource) => {
+    if (ressource.type === "lien") {
+      if (ressource.url) window.open(ressource.url, "_blank", "noopener,noreferrer");
+      return;
+    }
     setDownloadingId(ressource.id);
     setError(null);
     try {
       const response = await api.get(`/ressources/${ressource.id}/download`, {
         responseType: "blob",
       });
-      const url = URL.createObjectURL(response.data as Blob);
+      const objectUrl = URL.createObjectURL(response.data as Blob);
       const link = document.createElement("a");
-      link.href = url;
-      link.download = ressource.filename;
+      link.href = objectUrl;
+      link.download = ressource.filename ?? ressource.title;
       document.body.appendChild(link);
       link.click();
       link.remove();
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(objectUrl);
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -76,15 +80,17 @@ export default function RessourcesStudentView() {
               className="bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl p-5 flex flex-col gap-3"
             >
               <div className="flex items-center gap-2 text-(--theme-text-primary) font-semibold">
-                {ressource.mimeType === "application/pdf" ? (
+                {ressource.type === "pdf" ? (
                   <FileText size={18} className="text-(--theme-accent) shrink-0" />
-                ) : (
+                ) : ressource.type === "zip" ? (
                   <FileArchive size={18} className="text-(--theme-accent) shrink-0" />
+                ) : (
+                  <Link2 size={18} className="text-(--theme-accent) shrink-0" />
                 )}
                 <span className="truncate">{ressource.title}</span>
               </div>
               <p className="text-xs text-(--theme-text-secondary)">
-                {formatSize(ressource.size)}
+                {ressource.size !== null ? formatSize(ressource.size) : "Lien externe"}
                 {ressource.uploadedBy && ` · ${ressource.uploadedBy.firstname} ${ressource.uploadedBy.lastname}`}
               </p>
               <button
@@ -95,10 +101,12 @@ export default function RessourcesStudentView() {
               >
                 {downloadingId === ressource.id ? (
                   <Loader2 size={14} className="animate-spin" />
+                ) : ressource.type === "lien" ? (
+                  <Link2 size={14} />
                 ) : (
                   <Download size={14} />
                 )}
-                Télécharger
+                {ressource.type === "lien" ? "Ouvrir" : "Télécharger"}
               </button>
             </div>
           ))}

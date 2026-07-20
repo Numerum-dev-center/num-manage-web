@@ -1,3 +1,5 @@
+export type RessourceType = "pdf" | "zip" | "lien";
+
 export interface RessourceUploader {
   id: string;
   firstname: string;
@@ -6,10 +8,12 @@ export interface RessourceUploader {
 
 export interface Ressource {
   id: string;
+  type: RessourceType;
   title: string;
-  filename: string;
-  mimeType: string;
-  size: number;
+  filename: string | null;
+  mimeType: string | null;
+  size: number | null;
+  url: string | null;
   promotionId: string;
   promotion?: { id: string; name: string } | null;
   uploadedById: string;
