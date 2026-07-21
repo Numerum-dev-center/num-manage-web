@@ -8,6 +8,7 @@ import { z } from "zod";
 import api from "@/lib/api";
 import { getErrorMessage } from "@/lib/get-error-message";
 import type { ApprenantSummary } from "@/lib/types/user";
+import type { Promotion } from "@/lib/types/promotion";
 
 const createPromotionSchema = z
   .object({
@@ -72,8 +73,10 @@ export default function PromotionCreateView({ basePath }: { basePath: string }) 
         endDate: result.data.endDate || undefined,
         formateurId: result.data.formateurId || undefined,
       };
-      await api.post("/promotions", payload);
-      router.push(basePath);
+      const response = await api.post<Promotion>("/promotions", payload);
+      // Redirige vers le détail (et non la liste) pour enchaîner directement
+      // sur l'affectation d'apprenants sans perdre le fil.
+      router.push(`${basePath}/${response.data.id}`);
     } catch (err) {
       setMessage({ type: "error", text: getErrorMessage(err) });
     } finally {

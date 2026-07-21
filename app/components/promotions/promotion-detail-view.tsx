@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Archive, Loader2, UserMinus, UserPlus } from "lucide-react";
+import { ArrowLeft, Archive, ArchiveRestore, Loader2, UserMinus, UserPlus } from "lucide-react";
 import { z } from "zod";
 import api from "@/lib/api";
 import { getErrorMessage } from "@/lib/get-error-message";
@@ -100,7 +100,9 @@ export default function PromotionDetailView({
         description: result.data.description || undefined,
         startDate: result.data.startDate || undefined,
         endDate: result.data.endDate || undefined,
-        formateurId: result.data.formateurId || undefined,
+        // `null` explicite (et non `undefined`) pour bien vider le formateur
+        // en base quand "Aucun formateur assigné" est sélectionné.
+        formateurId: result.data.formateurId || null,
       });
       setMessage({ type: "success", text: "Promotion mise à jour" });
       loadPromotion();
@@ -114,6 +116,15 @@ export default function PromotionDetailView({
   const handleArchive = async () => {
     try {
       await api.patch(`/promotions/${promotionId}/archive`);
+      loadPromotion();
+    } catch (err) {
+      setMessage({ type: "error", text: getErrorMessage(err) });
+    }
+  };
+
+  const handleUnarchive = async () => {
+    try {
+      await api.patch(`/promotions/${promotionId}/unarchive`);
       loadPromotion();
     } catch (err) {
       setMessage({ type: "error", text: getErrorMessage(err) });
@@ -190,9 +201,19 @@ export default function PromotionDetailView({
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-(--theme-text-primary)">Détails de la promotion</h1>
           {promotion.isArchived ? (
-            <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-(--theme-surface-muted) text-(--theme-text-secondary)">
-              Archivée
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-(--theme-surface-muted) text-(--theme-text-secondary)">
+                Archivée
+              </span>
+              <button
+                type="button"
+                onClick={handleUnarchive}
+                className="flex items-center gap-1.5 text-xs font-semibold text-(--theme-text-secondary) hover:text-(--theme-primary) transition-colors"
+              >
+                <ArchiveRestore size={14} />
+                Réactiver
+              </button>
+            </div>
           ) : (
             <button
               type="button"

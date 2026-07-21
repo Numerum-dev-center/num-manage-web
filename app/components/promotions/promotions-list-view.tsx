@@ -2,10 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Archive, Calendar, GraduationCap, Plus, Users } from "lucide-react";
+import { Archive, ArchiveRestore, Calendar, FileText, GraduationCap, Plus, Users } from "lucide-react";
 import api from "@/lib/api";
 import { getErrorMessage } from "@/lib/get-error-message";
 import type { Promotion } from "@/lib/types/promotion";
+
+interface RessourceSummary {
+  promotionId: string;
+}
 
 function formatDate(value?: string | null): string {
   if (!value) return "—";
@@ -14,6 +18,7 @@ function formatDate(value?: string | null): string {
 
 export default function PromotionsListView({ basePath }: { basePath: string }) {
   const [promotions, setPromotions] = useState<Promotion[] | null>(null);
+  const [ressourceCounts, setRessourceCounts] = useState<Record<string, number>>({});
   const [showArchived, setShowArchived] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -33,10 +38,33 @@ export default function PromotionsListView({ basePath }: { basePath: string }) {
     loadPromotions(showArchived);
   }, [showArchived]);
 
+  useEffect(() => {
+    api
+      .get<RessourceSummary[]>("/ressources")
+      .then((response) => {
+        const counts: Record<string, number> = {};
+        for (const ressource of response.data) {
+          counts[ressource.promotionId] = (counts[ressource.promotionId] ?? 0) + 1;
+        }
+        setRessourceCounts(counts);
+      })
+      .catch(() => setRessourceCounts({}));
+  }, []);
+
   const handleArchive = async (id: string) => {
     try {
       await api.patch(`/promotions/${id}/archive`);
       setMessage({ type: "success", text: "Promotion archivée : elle n'apparaît plus dans la liste active" });
+      loadPromotions(showArchived);
+    } catch (err) {
+      setMessage({ type: "error", text: getErrorMessage(err) });
+    }
+  };
+
+  const handleUnarchive = async (id: string) => {
+    try {
+      await api.patch(`/promotions/${id}/unarchive`);
+      setMessage({ type: "success", text: "Promotion réactivée" });
       loadPromotions(showArchived);
     } catch (err) {
       setMessage({ type: "error", text: getErrorMessage(err) });
@@ -102,9 +130,11 @@ export default function PromotionsListView({ basePath }: { basePath: string }) {
             <thead>
               <tr className="bg-(--theme-surface-muted) text-(--theme-text-secondary) text-xs uppercase tracking-wider">
                 <th className="px-6 py-3 font-semibold">Nom</th>
+                <th className="px-6 py-3 font-semibold">Description</th>
                 <th className="px-6 py-3 font-semibold">Formateur</th>
                 <th className="px-6 py-3 font-semibold">Dates</th>
                 <th className="px-6 py-3 font-semibold text-center">Apprenants</th>
+                <th className="px-6 py-3 font-semibold text-center">Ressources</th>
                 <th className="px-6 py-3 font-semibold">Statut</th>
                 <th className="px-6 py-3 font-semibold text-right">Actions</th>
               </tr>
@@ -112,14 +142,14 @@ export default function PromotionsListView({ basePath }: { basePath: string }) {
             <tbody className="divide-y divide-(--theme-border)">
               {promotions === null && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-6 text-center text-(--theme-text-secondary)">
+                  <td colSpan={8} className="px-6 py-6 text-center text-(--theme-text-secondary)">
                     Chargement...
                   </td>
                 </tr>
               )}
               {promotions?.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-6 text-center text-(--theme-text-secondary)">
+                  <td colSpan={8} className="px-6 py-6 text-center text-(--theme-text-secondary)">
                     {showArchived ? "Aucune promotion archivée." : "Aucune promotion active pour le moment."}
                   </td>
                 </tr>
@@ -134,6 +164,9 @@ export default function PromotionsListView({ basePath }: { basePath: string }) {
                       <GraduationCap size={16} />
                       {promotion.name}
                     </Link>
+                  </td>
+                  <td className="px-6 py-4 text-(--theme-text-secondary) max-w-3xs">
+                    <span className="line-clamp-1">{promotion.description || "—"}</span>
                   </td>
                   <td className="px-6 py-4 text-(--theme-text-secondary)">
                     {promotion.formateur ? `${promotion.formateur.firstname} ${promotion.formateur.lastname}` : "—"}
@@ -150,6 +183,12 @@ export default function PromotionsListView({ basePath }: { basePath: string }) {
                       {promotion.apprenants?.length ?? 0}
                     </span>
                   </td>
+                  <td className="px-6 py-4 text-center">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-(--theme-text-secondary) bg-(--theme-surface-muted) px-2.5 py-1 rounded-full">
+                      <FileText size={13} />
+                      {ressourceCounts[promotion.id] ?? 0}
+                    </span>
+                  </td>
                   <td className="px-6 py-4">
                     <span
                       className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full ${
@@ -162,7 +201,16 @@ export default function PromotionsListView({ basePath }: { basePath: string }) {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    {!promotion.isArchived && (
+                    {promotion.isArchived ? (
+                      <button
+                        type="button"
+                        onClick={() => handleUnarchive(promotion.id)}
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-(--theme-text-secondary) hover:text-(--theme-primary) transition-colors"
+                      >
+                        <ArchiveRestore size={14} />
+                        Réactiver
+                      </button>
+                    ) : (
                       <button
                         type="button"
                         onClick={() => handleArchive(promotion.id)}
