@@ -14,6 +14,7 @@ export interface ApprenantSummary {
   role: UserRole;
   isActive: boolean;
   phoneNumber?: string;
+  specialite?: string | null;
   promotionId?: string | null;
   promotion?: UserPromotionSummary | null;
   createdAt: string;

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { GraduationCap } from "lucide-react";
+import { GraduationCap, Plus } from "lucide-react";
 import api from "@/lib/api";
 import { getErrorMessage } from "@/lib/get-error-message";
 import type { ApprenantSummary } from "@/lib/types/user";
@@ -38,11 +38,20 @@ export default function ApprenantsListView({ basePath }: { basePath: string }) {
 
   return (
     <main className="flex-1 p-8 overflow-y-auto flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold text-(--theme-text-primary)">Apprenants</h1>
-        <p className="text-sm text-(--theme-text-secondary) mt-1">
-          Retrouvez tous les apprenants et filtrez-les par promotion et par statut.
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-(--theme-text-primary)">Apprenants</h1>
+          <p className="text-sm text-(--theme-text-secondary) mt-1">
+            Retrouvez tous les apprenants et filtrez-les par promotion et par statut.
+          </p>
+        </div>
+        <Link
+          href={`${basePath}/creer`}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-(--theme-primary) text-(--theme-text-inverse) text-sm font-semibold hover:bg-(--theme-primary-hover) transition-colors"
+        >
+          <Plus size={16} />
+          Nouvel apprenant
+        </Link>
       </div>
 
       {error && <p className="text-sm font-medium text-(--theme-error)">{error}</p>}
@@ -79,6 +88,7 @@ export default function ApprenantsListView({ basePath }: { basePath: string }) {
             <thead>
               <tr className="bg-(--theme-surface-muted) text-(--theme-text-secondary) text-xs uppercase tracking-wider">
                 <th className="px-6 py-3 font-semibold">Nom</th>
+                <th className="px-6 py-3 font-semibold">Spécialité</th>
                 <th className="px-6 py-3 font-semibold">Email</th>
                 <th className="px-6 py-3 font-semibold">Promotion</th>
                 <th className="px-6 py-3 font-semibold">Statut</th>
@@ -87,14 +97,14 @@ export default function ApprenantsListView({ basePath }: { basePath: string }) {
             <tbody className="divide-y divide-(--theme-border)">
               {apprenants === null && (
                 <tr>
-                  <td colSpan={4} className="px-6 py-6 text-center text-(--theme-text-secondary)">
+                  <td colSpan={5} className="px-6 py-6 text-center text-(--theme-text-secondary)">
                     Chargement...
                   </td>
                 </tr>
               )}
               {apprenants !== null && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-6 py-6 text-center text-(--theme-text-secondary)">
+                  <td colSpan={5} className="px-6 py-6 text-center text-(--theme-text-secondary)">
                     Aucun apprenant ne correspond à ces filtres.
                   </td>
                 </tr>
@@ -110,6 +120,7 @@ export default function ApprenantsListView({ basePath }: { basePath: string }) {
                       {apprenant.firstname} {apprenant.lastname}
                     </Link>
                   </td>
+                  <td className="px-6 py-4 text-(--theme-text-secondary)">{apprenant.specialite || "—"}</td>
                   <td className="px-6 py-4 text-(--theme-text-secondary)">{apprenant.email}</td>
                   <td className="px-6 py-4 text-(--theme-text-secondary)">
                     {apprenant.promotion?.name ?? "—"}
