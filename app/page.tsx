@@ -78,13 +78,13 @@ const PROGRAMMES = [
     index: '02',
     title: 'Stage en entreprise',
     description: "Immersion complète dans une équipe de développement partenaire : revue de code, sprints, déploiements réels.",
-    image: '/stage_en_entreprise.png',
+    image: '/stage_en_entreprise.webp',
   },
   {
     index: '03',
     title: 'Spécialisation & Certification',
     description: "Approfondissement sur une stack (frontend, backend, data) et certification reconnue par nos entreprises partenaires.",
-    image: '/specialisation.png',
+    image: '/specialisation.webp',
   },
 ];
 
@@ -167,10 +167,10 @@ export default function LandingPage() {
       {/* HERO SECTION — photo plein écran, sans marge, sous la navbar transparente */}
       <section className="relative h-screen min-h-[640px] w-full overflow-hidden">
         <Image
-          src="/aceuil.png"
+          src="/aceuil.webp"
           alt="Apprenants développeurs travaillant ensemble sur leurs ordinateurs portables"
           fill
-          preload
+          priority
           sizes="100vw"
           className="object-cover animate-ken-burns"
         />
