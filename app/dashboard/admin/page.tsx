@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Users, GraduationCap, UserCheck, ShieldCheck } from "lucide-react";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import api from "@/lib/api";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 interface ApiUser {
   id: string;
@@ -12,7 +13,6 @@ interface ApiUser {
 }
 
 const UPCOMING = [
-  { title: "Annonces", sprint: "S5", description: "Diffusion d'annonces et notifications par email aux promotions." },
   { title: "Présences", sprint: "S6", description: "Émargement par QR Code signé et suivi de présence." },
   { title: "Certificats", sprint: "S9", description: "Génération de certificats PDF avec vérification publique par QR Code." },
   { title: "Rapports RH", sprint: "S10", description: "Tableaux de bord RH et export des indicateurs de formation." },
@@ -21,6 +21,7 @@ const UPCOMING = [
 export default function AdminDashboard() {
   const user = useAuthStore((state) => state.user);
   const [users, setUsers] = useState<ApiUser[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -29,8 +30,11 @@ export default function AdminDashboard() {
       .then((response) => {
         if (!cancelled) setUsers(response.data);
       })
-      .catch(() => {
-        if (!cancelled) setUsers([]);
+      .catch((err) => {
+        if (!cancelled) {
+          setUsers([]);
+          setError(getErrorMessage(err, "Impossible de charger les compteurs"));
+        }
       });
     return () => {
       cancelled = true;
@@ -70,6 +74,8 @@ export default function AdminDashboard() {
           État de la plateforme Numerum Dev Center.
         </p>
       </div>
+
+      {error && <p className="text-sm font-medium text-(--theme-error)">{error}</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((kpi, idx) => (

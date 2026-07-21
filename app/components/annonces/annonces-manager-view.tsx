@@ -85,7 +85,15 @@ export default function AnnoncesManagerView() {
       setMessage({ type: "success", text: "Annonce publiée avec succès" });
       setTitle("");
       setContent("");
-      loadAnnonces();
+      // Aligne le filtre d'affichage sur la promotion qui vient de recevoir
+      // l'annonce : sans ça, publier pendant qu'un autre filtre est actif
+      // donne l'impression que rien ne s'est passé (l'annonce existe bien
+      // côté serveur mais n'apparaît pas dans la liste affichée).
+      if (promotionFilter !== selectedPromotionId) {
+        setPromotionFilter(selectedPromotionId);
+      } else {
+        loadAnnonces();
+      }
     } catch (err) {
       setMessage({ type: "error", text: getErrorMessage(err) });
     } finally {
