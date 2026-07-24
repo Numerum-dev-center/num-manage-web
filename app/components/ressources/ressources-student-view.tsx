@@ -35,7 +35,7 @@ export default function RessourcesStudentView() {
     setDownloadingId(ressource.id);
     setError(null);
     try {
-      const response = await api.get(`/ressources/${ressource.id}/download`, {
+      const response = await api.get(`/ressources/${ressource.id}/telecharger`, {
         responseType: "blob",
       });
       const objectUrl = URL.createObjectURL(response.data as Blob);

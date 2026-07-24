@@ -154,7 +154,7 @@ export default function RessourcesManagerView() {
     }
     setDownloadingId(ressource.id);
     try {
-      const response = await api.get(`/ressources/${ressource.id}/download`, {
+      const response = await api.get(`/ressources/${ressource.id}/telecharger`, {
         responseType: "blob",
       });
       const objectUrl = URL.createObjectURL(response.data as Blob);
