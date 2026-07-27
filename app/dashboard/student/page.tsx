@@ -66,7 +66,7 @@ export default function StudentDashboard() {
           ))}
         </div>
 
-        <div className="flex-1 bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl p-6 shadow-sm flex flex-col gap-4">
+        <div className="flex-1 bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl p-6 flex flex-col gap-4">
           <h2 className="text-lg font-bold text-(--theme-text-primary)">Mon parcours</h2>
           {promotion ? (
             <div className="flex-1 border border-(--theme-border) rounded-xl flex flex-col items-center justify-center gap-3 p-8">
@@ -91,7 +91,7 @@ export default function StudentDashboard() {
 
       <aside className="w-80 bg-(--theme-card-bg) border-l border-(--theme-border) p-6 flex flex-col gap-8 overflow-y-auto shrink-0">
         <div className="flex flex-col items-center text-center p-6 bg-(--theme-surface-muted) rounded-2xl border border-(--theme-border)">
-          <div className="w-20 h-20 rounded-full bg-(--theme-primary) text-(--theme-text-inverse) flex items-center justify-center text-2xl font-bold shadow-inner mb-3">
+          <div className="w-20 h-20 rounded-full bg-(--theme-primary) text-(--theme-text-inverse) flex items-center justify-center text-2xl font-bold mb-3">
             {user ? `${user.firstname[0] ?? ""}${user.lastname[0] ?? ""}`.toUpperCase() : "?"}
           </div>
           <h2 className="text-lg font-bold text-(--theme-text-primary)">

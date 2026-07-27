@@ -23,11 +23,21 @@ export default function AuthLayout({
     <div className="min-h-screen w-full flex bg-(--theme-page-bg) text-(--theme-text-primary) transition-colors duration-300">
       {/* Panneau marketing — visible uniquement à partir des grands écrans */}
       <aside className="hidden lg:flex w-1/2 relative overflow-hidden flex-col justify-between p-12 bg-linear-to-br from-(--theme-primary) to-(--theme-primary-hover) text-(--theme-text-inverse)">
+        {/* Trame façon plan d'ingénierie, bien marquée */}
+        <svg className="absolute inset-0 w-full h-full text-(--theme-text-inverse) opacity-[0.18] pointer-events-none" aria-hidden="true">
+          <defs>
+            <pattern id="auth-blueprint-grid" width="96" height="96" patternUnits="userSpaceOnUse">
+              <path d="M 96 0 L 0 0 0 96" fill="none" stroke="currentColor" strokeWidth="1" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#auth-blueprint-grid)" />
+        </svg>
+
         <div className="absolute top-0 right-0 w-96 h-96 bg-(--theme-accent)/20 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-(--theme-text-inverse)/10 rounded-full blur-[100px] pointer-events-none" />
 
         <Link href="/" className="relative z-10 flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-(--theme-accent) flex items-center justify-center font-black text-base shadow-md">
+          <div className="w-9 h-9 rounded-xl bg-(--theme-accent) flex items-center justify-center font-black text-base">
             N
           </div>
           <span className="text-lg font-black tracking-tight">

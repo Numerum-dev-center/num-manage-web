@@ -190,13 +190,17 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     <div className="min-h-screen w-full flex bg-(--theme-page-bg) text-(--theme-text-primary) antialiased transition-colors duration-300">
       <aside className="w-64 bg-(--theme-sidebar-bg) border-r border-(--theme-sidebar-border) text-(--theme-sidebar-muted) flex flex-col justify-between p-6 transition-colors duration-300">
         <div className="space-y-6">
-          <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => router.push('/')}
+            className="flex items-center gap-3 cursor-pointer"
+          >
             <div className="w-9 h-9 rounded-lg bg-(--theme-accent) flex items-center justify-center text-(--theme-text-inverse) font-black text-sm">N</div>
-            <div>
+            <div className="text-left">
               <p className="text-sm font-bold text-(--theme-text-inverse)">{currentSidebar.title}</p>
               <p className="text-[10px] uppercase tracking-[0.24em] text-(--theme-sidebar-muted)">{currentSidebar.subtitle}</p>
             </div>
-          </div>
+          </button>
 
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-(--theme-sidebar-muted)" size={16} />

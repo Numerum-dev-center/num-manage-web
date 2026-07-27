@@ -92,7 +92,7 @@ export default function LandingPage() {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const hoverUnderlineStyle = "relative pb-1 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-(--theme-accent) after:transition-all after:duration-300 hover:after:w-full cursor-pointer";
+  const hoverUnderlineStyle = "relative pb-1 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-(--theme-primary) after:transition-all after:duration-300 hover:after:w-full cursor-pointer";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -113,14 +113,18 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto h-20 px-6 flex items-center justify-between">
 
           {/* Logo */}
-          <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => router.push('/')}
+            className="flex items-center gap-2.5 cursor-pointer"
+          >
             <div className="w-9 h-9 rounded-xl bg-(--theme-accent) flex items-center justify-center text-(--theme-text-inverse) font-black text-base shadow-md shadow-(--theme-accent)/20">
               N
             </div>
             <span className={`text-lg font-black tracking-tight transition-colors duration-500 ${scrolled || mobileMenuOpen ? 'text-(--theme-text-primary)' : 'text-white'}`}>
               Numerum<span className="text-(--theme-accent)">.</span>
             </span>
-          </div>
+          </button>
 
           {/* Navigation Desktop */}
           <nav className={`hidden md:flex items-center gap-8 text-sm font-semibold transition-colors duration-500 ${scrolled ? 'text-(--theme-text-primary)/80' : 'text-white/90'}`}>
@@ -132,7 +136,7 @@ export default function LandingPage() {
 
           {/* Actions Cta */}
           <div className="hidden md:flex items-center gap-3">
-            <ThemeToggle className={!scrolled ? '!text-white' : ''} />
+            <ThemeToggle className={!scrolled ? 'text-white!' : ''} />
 
             <button  onClick={() => router.push('/auth/register')} className="flex items-center gap-2 px-5 py-2.5 bg-(--theme-primary) text-(--theme-text-inverse) rounded-xl text-sm font-bold shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all">
               Inscription <ChevronRight size={16} />
@@ -144,7 +148,7 @@ export default function LandingPage() {
 
           {/* Bouton Mobile */}
           <div className="md:hidden flex items-center gap-1">
-            <ThemeToggle className={!scrolled ? '!text-white' : ''} />
+            <ThemeToggle className={!scrolled ? 'text-white!' : ''} />
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className={`p-2 transition-colors duration-500 ${scrolled || mobileMenuOpen ? 'text-(--theme-text-primary)' : 'text-white'}`}>
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -165,7 +169,7 @@ export default function LandingPage() {
       </header>
 
       {/* HERO SECTION — photo plein écran, sans marge, sous la navbar transparente */}
-      <section className="relative h-screen min-h-[640px] w-full overflow-hidden">
+      <section className="relative h-screen min-h-160 w-full overflow-hidden">
         <Image
           src="/aceuil.webp"
           alt="Apprenants développeurs travaillant ensemble sur leurs ordinateurs portables"
@@ -176,12 +180,6 @@ export default function LandingPage() {
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/15 to-black/55" />
 
-        {/* Badge Flottant, superposé sur la photo sous la navbar */}
-        <Reveal className="absolute top-24 sm:top-28 left-6 sm:left-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-(--theme-card-bg)/90 backdrop-blur-sm text-(--theme-accent) rounded-full text-xs font-bold tracking-wide uppercase border border-(--theme-accent)/20 shadow-lg">
-            <Sparkles size={12} className="fill-current" /> Formation & stages en entreprise tech
-          </div>
-        </Reveal>
 
         {/* Contenu superposé, ancré en bas de la photo */}
         <Reveal delay={120} className="absolute inset-x-0 bottom-0 pb-14 sm:pb-20">
@@ -214,13 +212,13 @@ export default function LandingPage() {
             Les technologies pratiquées dès le premier stage
           </p>
         </Reveal>
-        <div className="relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+        <div className="relative overflow-hidden mask-[linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
           <div className="flex items-center gap-4 w-max animate-marquee hover:[animation-play-state:paused]">
             {[...TECH_STACK, ...TECH_STACK].map((tech, i) => (
               <div
                 key={`${tech.name}-${i}`}
                 style={{ '--brand': `#${tech.icon.hex}` } as React.CSSProperties}
-                className="flex items-center gap-3 px-5 py-3 rounded-full border border-(--theme-border) bg-(--theme-card-bg) shrink-0 shadow-sm text-[var(--brand)] hover:text-(--theme-text-primary)/25 transition-colors duration-300"
+                className="flex items-center gap-3 px-5 py-3 rounded-full border border-(--theme-border) bg-(--theme-card-bg) shrink-0 shadow-sm text-(--brand) hover:text-(--theme-text-primary)/25 transition-colors duration-300"
               >
                 <TechIcon path={tech.icon.path} />
                 <span className="text-[11px] font-semibold text-(--theme-text-secondary)/80 tracking-wide whitespace-nowrap">{tech.name}</span>
@@ -251,19 +249,19 @@ export default function LandingPage() {
                 <div className="w-11 h-11 rounded-xl bg-(--theme-accent)/10 text-(--theme-accent) flex items-center justify-center shrink-0">
                   <GraduationCap size={20} />
                 </div>
-                <span className="text-xs font-bold text-(--theme-text-primary) max-w-[7rem] leading-snug">Cursus certifiant</span>
+                <span className="text-xs font-bold text-(--theme-text-primary) max-w-28 leading-snug">Cursus certifiant</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-xl bg-(--theme-primary)/10 text-(--theme-primary) flex items-center justify-center shrink-0">
                   <Handshake size={20} />
                 </div>
-                <span className="text-xs font-bold text-(--theme-text-primary) max-w-[7rem] leading-snug">Stage garanti</span>
+                <span className="text-xs font-bold text-(--theme-text-primary) max-w-28 leading-snug">Stage garanti</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-xl bg-(--theme-accent)/10 text-(--theme-accent) flex items-center justify-center shrink-0">
                   <Target size={20} />
                 </div>
-                <span className="text-xs font-bold text-(--theme-text-primary) max-w-[7rem] leading-snug">Suivi individuel</span>
+                <span className="text-xs font-bold text-(--theme-text-primary) max-w-28 leading-snug">Suivi individuel</span>
               </div>
             </div>
 

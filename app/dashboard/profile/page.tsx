@@ -199,7 +199,7 @@ export default function ProfilePage() {
       </p>
       <form
         onSubmit={handleSubmit}
-        className="bg-(--theme-card-bg) rounded-2xl border border-(--theme-border) shadow-sm overflow-hidden"
+        className="bg-(--theme-card-bg) rounded-2xl border border-(--theme-border) overflow-hidden"
       >
 
         {/* Bandeau */}
@@ -208,7 +208,7 @@ export default function ProfilePage() {
           {/* Avatar */}
           <div className="flex items-end -mt-12 mb-6">
             <div className="relative">
-              <div className="w-24 h-24 rounded-full border-4 border-(--theme-card-bg) bg-(--theme-text-secondary)/20 overflow-hidden flex items-center justify-center shadow-md">
+              <div className="w-24 h-24 rounded-full border-4 border-(--theme-card-bg) bg-(--theme-text-secondary)/20 overflow-hidden flex items-center justify-center">
                 {avatarPreview ? (
 
                   <img

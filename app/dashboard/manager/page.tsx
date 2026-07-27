@@ -50,7 +50,7 @@ export default function FormateurDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="p-5 bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl shadow-sm flex flex-col gap-3">
+        <div className="p-5 bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-(--theme-text-secondary)">Apprenants sur la plateforme</span>
             <Users size={16} className="text-(--theme-primary)" />

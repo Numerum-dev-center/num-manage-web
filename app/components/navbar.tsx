@@ -39,7 +39,7 @@ export default function Navbar() {
 
         {/* Bloc Profil (déconnexion : bouton unique en bas de la sidebar) */}
         <div className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-full bg-(--theme-primary)/10 border border-(--theme-border) flex items-center justify-center text-(--theme-primary) font-bold text-sm shadow-inner shrink-0">
+          <div className="w-9 h-9 rounded-full bg-(--theme-primary)/10 border border-(--theme-border) flex items-center justify-center text-(--theme-primary) font-bold text-sm shrink-0">
             {user!.firstname.split(' ').map((n) => n[0]).join('')}
           </div>
           <div className="flex flex-col text-left">

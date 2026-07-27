@@ -53,7 +53,7 @@ function GoogleCallbackContent() {
   if (error) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center bg-(--theme-page-bg) p-6">
-        <div className="max-w-sm w-full text-center flex flex-col gap-4 p-8 rounded-2xl border border-(--theme-border) bg-(--theme-card-bg) shadow-sm">
+        <div className="max-w-sm w-full text-center flex flex-col gap-4 p-8 rounded-2xl border border-(--theme-border) bg-(--theme-card-bg)">
           <p className="text-sm font-medium text-(--theme-error)">{error}</p>
           <Link
             href="/auth/login"
