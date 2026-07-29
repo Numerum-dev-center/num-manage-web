@@ -137,6 +137,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const pathname = usePathname();
   const [isFormationOpen, setIsFormationOpen] = useState(true);
   const [counts, setCounts] = useState<{ total: number; students: number } | null>(null);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   useEffect(() => {
     if (!user || (user.role !== "admin" && user.role !== "manager")) return;
@@ -173,6 +174,11 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     }
   }, [user, pathname, router]);
 
+  // Referme le tiroir de navigation mobile dès qu'on change de page.
+  useEffect(() => {
+    setIsMobileNavOpen(false);
+  }, [pathname]);
+
   const activeSection = useMemo(() => {
     if (!user) return "student";
     return user.role;
@@ -187,8 +193,21 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   };
 
   return (
-    <div className="min-h-screen w-full flex bg-(--theme-page-bg) text-(--theme-text-primary) antialiased transition-colors duration-300">
-      <aside className="w-64 bg-(--theme-sidebar-bg) border-r border-(--theme-sidebar-border) text-(--theme-sidebar-muted) flex flex-col justify-between p-6 transition-colors duration-300">
+    <div className="min-h-screen w-full flex bg-(--theme-page-bg) text-(--theme-text-primary) antialiased transition-colors duration-300 overflow-x-hidden">
+      {/* Fond assombri derrière le tiroir de navigation mobile */}
+      {isMobileNavOpen && (
+        <div
+          onClick={() => setIsMobileNavOpen(false)}
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-(--theme-sidebar-bg) border-r border-(--theme-sidebar-border) text-(--theme-sidebar-muted) flex flex-col justify-between p-6 transition-transform duration-300 md:transition-colors md:static md:translate-x-0 ${
+          isMobileNavOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         <div className="space-y-6">
           <button
             type="button"
@@ -275,6 +294,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                 <Link
                   key={index}
                   href={item.href ?? "#"}
+                  onClick={() => setIsMobileNavOpen(false)}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition ${
                     isActive
                       ? "bg-(--theme-sidebar-hover) text-(--theme-text-inverse)"
@@ -305,6 +325,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                 <Link
                   key={index}
                   href={item.href ?? "#"}
+                  onClick={() => setIsMobileNavOpen(false)}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium text-(--theme-sidebar-muted) hover:bg-(--theme-sidebar-hover)/80 hover:text-(--theme-text-inverse) transition"
                 >
                   <item.icon size={18} />
@@ -337,7 +358,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Navbar />
+        <Navbar onMenuClick={() => setIsMobileNavOpen(true)} />
         <div className="flex-1 overflow-hidden">{children}</div>
       </div>
     </div>

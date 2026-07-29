@@ -102,7 +102,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen w-full bg-(--theme-page-bg) text-(--theme-text-primary) font-sans antialiased selection:bg-(--theme-accent) selection:text-(--theme-text-inverse) overflow-x-hidden transition-colors duration-300">
+    <div className="relative min-h-screen w-full bg-(--theme-page-bg) text-(--theme-text-primary) font-sans antialiased selection:bg-(--theme-accent) selection:text-(--theme-text-inverse) overflow-x-hidden transition-colors duration-300">
 
       {/* EFFETS DE LUMIÈRE D'ARRIÈRE-PLAN (GLOW EFFECTS) */}
       <div className="absolute top-0 left-1/4 w-125 h-125 bg-(--theme-primary)/10 rounded-full blur-[120px] pointer-events-none -z-10 animate-pulse" />
@@ -158,12 +158,12 @@ export default function LandingPage() {
         {/* Menu Mobile */}
         {mobileMenuOpen && (
           <div className="md:hidden w-full bg-(--theme-page-bg) border-b border-(--theme-border) p-6 flex flex-col gap-4 animate-fade-in">
-            <a href="#bento" className="text-lg font-semibold">Plateforme</a>
-            <a href="#programmes" className="text-lg font-semibold">Parcours</a>
-            <a href="#stats" className="text-lg font-semibold">Impact</a>
-            <a href="#temoignages" className="text-lg font-semibold">Témoignages</a>
-            <button onClick={() => router.push('/auth/login')} className="w-full py-3 border border-(--theme-border-strong) rounded-xl font-bold">Connexion</button>
-            <button onClick={() => router.push('/auth/register')} className="w-full py-3 bg-(--theme-accent) text-(--theme-text-inverse) rounded-xl font-bold shadow-lg">Rejoindre le centre</button>
+            <a href="#bento" onClick={() => setMobileMenuOpen(false)} className="text-lg font-semibold">Plateforme</a>
+            <a href="#programmes" onClick={() => setMobileMenuOpen(false)} className="text-lg font-semibold">Parcours</a>
+            <a href="#stats" onClick={() => setMobileMenuOpen(false)} className="text-lg font-semibold">Impact</a>
+            <a href="#temoignages" onClick={() => setMobileMenuOpen(false)} className="text-lg font-semibold">Témoignages</a>
+            <button onClick={() => { setMobileMenuOpen(false); router.push('/auth/login'); }} className="w-full py-3 border border-(--theme-border-strong) rounded-xl font-bold">Connexion</button>
+            <button onClick={() => { setMobileMenuOpen(false); router.push('/auth/register'); }} className="w-full py-3 bg-(--theme-accent) text-(--theme-text-inverse) rounded-xl font-bold shadow-lg">Rejoindre le centre</button>
           </div>
         )}
       </header>
@@ -305,18 +305,6 @@ export default function LandingPage() {
 
       {/* BENTO GRID SECTION */}
       <section id="bento" className="relative py-20 overflow-hidden">
-        {/* Fond photo fixe (effet parallaxe) — position fixed, rognée par le overflow-hidden de la section */}
-        <div className="fixed inset-0 -z-20 pointer-events-none">
-          <Image
-            src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1600&q=70&fit=crop"
-            alt=""
-            fill
-            sizes="100vw"
-            className="object-cover"
-          />
-        </div>
-        <div className="absolute inset-0 -z-10 bg-(--theme-page-bg)/40" />
-
         <div className="relative max-w-7xl mx-auto px-6">
           <Reveal className="flex flex-col items-center text-center mb-16">
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight"><span className={hoverUnderlineStyle}>Une infrastructure, deux piliers</span></h2>

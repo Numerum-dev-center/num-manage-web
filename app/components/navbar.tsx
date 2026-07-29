@@ -2,21 +2,31 @@
 "use client";
 
 import React from 'react';
-import { Search, Bell } from 'lucide-react';
+import { Search, Bell, Menu } from 'lucide-react';
 import { useAuthStore } from '@/lib/stores/auth.store';
 import ThemeToggle from './theme-toggle';
 
-export default function Navbar() {
+export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const user = useAuthStore((state) => state.user);
 
   const hoverUnderlineStyle =
     'relative pb-1 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-(--theme-accent) after:transition-all after:duration-300 group-hover:after:w-full cursor-pointer';
 
   return (
-    <header className="h-16 bg-(--theme-card-bg) border-b border-(--theme-border) flex items-center justify-between px-8 shrink-0 w-full transition-colors duration-300">
+    <header className="h-16 bg-(--theme-card-bg) border-b border-(--theme-border) flex items-center justify-between gap-3 px-4 md:px-8 shrink-0 w-full transition-colors duration-300">
 
-      {/* Barre de recherche (Gauche) */}
-      <div className="relative w-80">
+      {/* Bouton menu mobile (ouvre la sidebar en tiroir) */}
+      <button
+        type="button"
+        onClick={onMenuClick}
+        className="md:hidden p-2 -ml-2 rounded-xl text-(--theme-text-secondary) hover:bg-(--theme-surface-muted) hover:text-(--theme-text-primary) transition-colors shrink-0"
+        aria-label="Ouvrir le menu"
+      >
+        <Menu size={20} />
+      </button>
+
+      {/* Barre de recherche (Gauche) — masquée sur mobile pour éviter tout débordement horizontal */}
+      <div className="relative w-80 hidden md:block">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-(--theme-text-secondary)" size={16} />
         <input
           type="text"
@@ -26,7 +36,7 @@ export default function Navbar() {
       </div>
 
       {/* Zone Utilisateur & Actions (Droite) */}
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-3 md:gap-6 min-w-0">
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <button className="p-2 rounded-xl hover:bg-(--theme-surface-muted) text-(--theme-text-secondary) hover:text-(--theme-text-primary) relative transition-colors">
