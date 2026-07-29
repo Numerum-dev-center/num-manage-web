@@ -124,7 +124,7 @@ export default function PromotionsListView({ basePath }: { basePath: string }) {
         </button>
       </div>
 
-      <div className="bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm min-w-180">
             <thead>

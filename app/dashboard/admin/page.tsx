@@ -79,7 +79,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((kpi, idx) => (
-          <div key={idx} className="p-5 bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl shadow-sm flex flex-col gap-3">
+          <div key={idx} className="p-5 bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-(--theme-text-secondary)">{kpi.title}</span>
               <kpi.icon size={16} className="text-(--theme-primary)" />

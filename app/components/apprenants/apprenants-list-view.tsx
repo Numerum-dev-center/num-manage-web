@@ -82,7 +82,7 @@ export default function ApprenantsListView({ basePath }: { basePath: string }) {
         </select>
       </div>
 
-      <div className="bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm min-w-160">
             <thead>

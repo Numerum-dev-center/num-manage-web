@@ -101,7 +101,7 @@ export default function RegisterPage() {
 
   return (
     <AuthLayout title="Create an account" subtitle="Join the platform today">
-      <div className="w-full p-8 rounded-2xl border border-(--theme-border) bg-(--theme-card-bg) shadow-sm flex flex-col gap-6">
+      <div className="w-full p-8 rounded-2xl border border-(--theme-border) bg-(--theme-card-bg) flex flex-col gap-6">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-semibold text-(--theme-text-primary)">Join as</label>
