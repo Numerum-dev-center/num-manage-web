@@ -76,7 +76,7 @@
       "id": "p-1",
       "name": "Promotion 2026 - Fullstack",
       "description": "Formation développement web full-stack",
-      "isArchived": false,
+      "isArchived": true,
       "startDate": "2026-01-12",
       "endDate": "2026-12-19",
       "formateurId": "u-manager-1",

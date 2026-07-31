@@ -64,8 +64,8 @@ function buildSidebarConfig(counts: { total: number; students: number } | null):
           subItems: [{ label: "En cours" }, { label: "Terminées" }],
         },
         { label: "Annonces", icon: Megaphone, href: "/dashboard/student/annonces" },
+        { label: "Projets", icon: ClipboardList, href: "/dashboard/student/projets" },
         { label: "Présences", icon: Calendar, upcoming: true },
-        { label: "Projets", icon: ClipboardList, upcoming: true },
       ],
       footerItems: [
         { label: "Paramètres", icon: Settings, href: "/dashboard/profile" },
@@ -87,8 +87,8 @@ function buildSidebarConfig(counts: { total: number; students: number } | null):
         { label: "Mes promotions", icon: GraduationCap, href: "/dashboard/manager/promotions" },
         { label: "Ressources", icon: FileText, href: "/dashboard/manager/ressources" },
         { label: "Annonces", icon: Megaphone, href: "/dashboard/manager/annonces" },
+        { label: "Projets", icon: FileSpreadsheet, href: "/dashboard/manager/projets" },
         { label: "Présences", icon: Calendar, upcoming: true },
-        { label: "Évaluations / Projets", icon: FileSpreadsheet, upcoming: true },
       ],
       footerItems: [
         { label: "Paramètres", icon: Settings, href: "/dashboard/profile" },
@@ -111,6 +111,7 @@ function buildSidebarConfig(counts: { total: number; students: number } | null):
         { label: "Apprenants", icon: GraduationCap, href: "/admin/apprenants" },
         { label: "Ressources", icon: FileText, href: "/admin/ressources" },
         { label: "Annonces", icon: Megaphone, href: "/admin/annonces" },
+        { label: "Projets", icon: ClipboardList, href: "/admin/projets" },
         { label: "Présences", icon: Calendar, upcoming: true },
         { label: "Certificats", icon: Award, upcoming: true },
         { label: "Rapports RH", icon: BarChart3, upcoming: true },

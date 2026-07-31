@@ -35,6 +35,15 @@ export default function AuthLayout({
 
         <div className="absolute top-0 right-0 w-96 h-96 bg-(--theme-accent)/20 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-(--theme-text-inverse)/10 rounded-full blur-[100px] pointer-events-none" />
+        <picture className="absolute inset-0 w-full h-full z-0 pointer-events-none">
+          <source srcSet="/images/register-left.svg" type="image/svg+xml" />
+          <img
+            src="/images/register-left.png"
+            alt="Illustration décorative"
+            aria-hidden="true"
+            className="w-full h-full object-cover opacity-30"
+          />
+        </picture>
 
         <Link href="/" className="relative z-10 flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-xl bg-(--theme-accent) flex items-center justify-center font-black text-base">
