@@ -61,4 +61,4 @@ votre poste. Pour repartir d'un état propre, restaurez `db.json` depuis git
 ## Variables d'environnement optionnelles
 
 - `MOCK_PORT` — port d'écoute (défaut `3001`)
-- `FRONTEND_URL` — origine autorisée en CORS (défaut `http://localhost:3000` ,https://num-manage-web.vercel.app)
+- `FRONTEND_URL` — origine autorisée en CORS (défaut `http://localhost:3000`)
