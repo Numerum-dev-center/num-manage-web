@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Nom du cookie httpOnly posé par le backend NestJS lors du login/refresh
-// (vérifié dans ton auth.controller.ts : res.cookie('refreshToken', ...))
-const AUTH_COOKIE_NAME = "refreshToken";
-
 // Liste des routes accessibles SANS être connecté
-// Tout ce qui n'est PAS dans cette liste sera automatiquement protégé
+// Tout ce qui n'est PAS dans cette liste reste accessible.
 const PUBLIC_ROUTES = [
   "/auth/login",
   "/auth/register",
@@ -31,19 +27,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Sinon, on cherche le cookie d'authentification dans la requête
-  const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
-
-  // Pas de cookie = utilisateur non connecté → redirection vers login
-  if (!token) {
-    const loginUrl = new URL("/auth/login", request.url);
-    // On garde en mémoire la page qu'il voulait visiter,
-    // pour l'y renvoyer après connexion (optionnel mais pratique)
-    loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  // Cookie présent → on laisse passer la requête normalement
+  // Dans un déploiement cross-domain (Vercel frontend + Render backend),
+  // le cookie `refreshToken` est stocké par l'API sur son propre domaine.
+  // Le middleware Next.js côté frontend ne peut pas lire ce cookie.
+  // La protection doit donc rester côté client dans `AuthGuard`.
   return NextResponse.next();
 }
 
