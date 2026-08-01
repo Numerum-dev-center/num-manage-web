@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import api from "@/lib/api";
@@ -10,24 +10,21 @@ import { getErrorMessage } from "@/lib/get-error-message";
 
 function GoogleCallbackContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const setAuth = useAuthStore((state) => state.setAuth);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = searchParams.get("token");
-    if (!token) {
-      setError("Connexion Google incomplète : jeton manquant.");
-      return;
-    }
-
-    localStorage.setItem("accessToken", token);
-
     api
-      .get("/auth/me")
+      .post('/auth/refresh')
+      .then((refreshResponse) => {
+        const { accessToken } = refreshResponse.data;
+        localStorage.setItem('accessToken', accessToken);
+
+        return api.get('/auth/me');
+      })
       .then((response) => {
         const user = response.data;
-        setAuth(user, token);
+        setAuth(user, localStorage.getItem('accessToken') ?? '');
 
         switch (user.role) {
           case "admin":

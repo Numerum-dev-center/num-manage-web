@@ -15,7 +15,6 @@ const registerSchema = z.object({
   lastname: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
   email: z.string().email('Adresse email invalide'),
   password: z.string().min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
-  role: z.enum(['student', 'manager'], 'Veuillez sélectionner un rôle valide'),
 });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
@@ -27,26 +26,16 @@ export default function RegisterPage() {
     lastname: '',
     email: '',
     password: '',
-    role: 'student',
   });
   const router = useRouter();
-  const [errors, setErrors] = useState<{ firstname?: string; lastname?: string; email?: string; password?: string; role?: string }>({});
+  const [errors, setErrors] = useState<{ firstname?: string; lastname?: string; email?: string; password?: string }>({});
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const roles: RegisterFormData['role'][] = ['student', 'manager'];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (errors[e.target.name as keyof RegisterFormData]) {
       setErrors({ ...errors, [e.target.name]: undefined });
-    }
-  };
-
-  const handleRoleSelection = (role: RegisterFormData['role']) => {
-    setFormData({ ...formData, role });
-    if (errors.role) {
-      setErrors({ ...errors, role: undefined });
     }
   };
 
@@ -61,7 +50,6 @@ export default function RegisterPage() {
         lastname: fieldErrors.lastname?.[0],
         email: fieldErrors.email?.[0],
         password: fieldErrors.password?.[0],
-        role: fieldErrors.role?.[0],
       });
       return;
     }
@@ -103,28 +91,6 @@ export default function RegisterPage() {
     <AuthLayout title="Create an account" subtitle="Join the platform today">
       <div className="w-full p-8 rounded-2xl border border-(--theme-border) bg-(--theme-card-bg) flex flex-col gap-6">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-semibold text-(--theme-text-primary)">Join as</label>
-              <div className="flex gap-2 w-full">
-                {roles.map((role) => (
-                  <button
-                    key={role}
-                    type="button"
-                    onClick={() => handleRoleSelection(role)}
-                    className={`flex-1 py-2.5 px-3 flex items-center justify-center gap-2 border rounded-lg text-xs font-medium transition-all outline-none ${formData.role === role
-                      ? 'border-(--theme-primary) text-(--theme-text-primary) bg-(--theme-surface-muted) font-semibold'
-                      : 'border-(--theme-border-strong) text-(--theme-text-secondary) hover:border-(--theme-primary) bg-(--theme-input-bg)'
-                      }`}
-                  >
-                    {role}
-                    <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${formData.role === role ? 'border-(--theme-primary)' : 'border-(--theme-border-strong)'}`}>
-                      {formData.role === role && <div className="w-1.5 h-1.5 rounded-full bg-(--theme-primary)" />}
-                    </div>
-                  </button>
-                ))}
-              </div>
-              {errors.role && <p className="text-xs text-(--theme-error)">{errors.role}</p>}
-            </div>
 
             <div className="flex flex-col gap-1">
               <label className="text-sm font-semibold text-(--theme-text-primary)">Firstname</label>
