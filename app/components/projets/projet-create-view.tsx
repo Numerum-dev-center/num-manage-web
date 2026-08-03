@@ -76,7 +76,7 @@ export default function ProjetCreateView({ basePath }: { basePath: string }) {
   };
 
   return (
-    <main className="flex-1 p-8 overflow-y-auto flex flex-col gap-6 max-w-2xl">
+    <main className="flex-1 p-8 overflow-y-auto flex flex-col gap-6 max-w-2xl mx-auto w-full">
       <Link
         href={basePath}
         className="flex items-center gap-2 text-sm text-(--theme-text-secondary) hover:text-(--theme-text-primary) w-fit"

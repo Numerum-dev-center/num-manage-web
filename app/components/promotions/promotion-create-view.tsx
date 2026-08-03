@@ -73,10 +73,8 @@ export default function PromotionCreateView({ basePath }: { basePath: string }) 
         endDate: result.data.endDate || undefined,
         formateurId: result.data.formateurId || undefined,
       };
-      const response = await api.post<Promotion>("/promotions", payload);
-      // Redirige vers le détail (et non la liste) pour enchaîner directement
-      // sur l'affectation d'apprenants sans perdre le fil.
-      router.push(`${basePath}/${response.data.id}`);
+      await api.post<Promotion>("/promotions", payload);
+      router.push(basePath);
     } catch (err) {
       setMessage({ type: "error", text: getErrorMessage(err) });
     } finally {
@@ -85,7 +83,7 @@ export default function PromotionCreateView({ basePath }: { basePath: string }) 
   };
 
   return (
-    <main className="flex-1 p-8 overflow-y-auto flex flex-col gap-6 max-w-2xl">
+    <main className="flex-1 p-8 overflow-y-auto flex flex-col gap-6 max-w-2xl mx-auto w-full">
       <Link
         href={basePath}
         className="flex items-center gap-2 text-sm text-(--theme-text-secondary) hover:text-(--theme-text-primary) w-fit"

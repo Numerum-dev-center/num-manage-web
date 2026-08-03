@@ -27,14 +27,14 @@ export default function StudentDashboard() {
   }, []);
 
   return (
-    <div className="flex-1 flex overflow-hidden">
-      <main className="flex-1 flex flex-col p-8 overflow-y-auto min-w-0 gap-6">
+    <div className="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden">
+      <main className="flex-1 flex flex-col p-8 md:overflow-y-auto min-w-0 gap-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-(--theme-text-primary)">
             Salut{user ? ` ${user.firstname}` : ""}
           </h1>
           <div className="flex items-center gap-4">
-            <div className="relative w-64">
+            <div className="relative w-64 hidden sm:block">
               <input
                 type="text"
                 placeholder="Rechercher..."
@@ -89,7 +89,7 @@ export default function StudentDashboard() {
         </div>
       </main>
 
-      <aside className="w-80 bg-(--theme-card-bg) border-l border-(--theme-border) p-6 flex flex-col gap-8 overflow-y-auto shrink-0">
+      <aside className="w-full md:w-80 bg-(--theme-card-bg) border-t md:border-t-0 md:border-l border-(--theme-border) p-6 flex flex-col gap-8 md:overflow-y-auto shrink-0">
         <div className="flex flex-col items-center text-center p-6 bg-(--theme-surface-muted) rounded-2xl border border-(--theme-border)">
           <div className="w-20 h-20 rounded-full bg-(--theme-primary) text-(--theme-text-inverse) flex items-center justify-center text-2xl font-bold mb-3">
             {user ? `${user.firstname[0] ?? ""}${user.lastname[0] ?? ""}`.toUpperCase() : "?"}

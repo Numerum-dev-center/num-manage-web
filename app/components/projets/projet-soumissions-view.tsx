@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, ArrowLeft, Code2, Globe, Loader2 } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Code2, Globe, Loader2, Users } from "lucide-react";
 import api from "@/lib/api";
 import { getErrorMessage } from "@/lib/get-error-message";
-import type { ProjetAvecStats, Soumission } from "@/lib/types/projet";
+import type { ApprenantAvecPoste, PosteProjet, ProjetAvecStats, Soumission } from "@/lib/types/projet";
+import { POSTE_PROJET_LABELS, POSTE_PROJET_OPTIONS } from "@/lib/types/projet";
 
 function formatDateHeure(value: string): string {
   return new Intl.DateTimeFormat("fr-FR", {
@@ -93,6 +94,7 @@ export default function ProjetSoumissionsView({
 }) {
   const [projet, setProjet] = useState<ProjetAvecStats | null>(null);
   const [soumissions, setSoumissions] = useState<Soumission[] | null>(null);
+  const [postes, setPostes] = useState<ApprenantAvecPoste[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -108,12 +110,33 @@ export default function ProjetSoumissionsView({
         setSoumissions([]);
         setError(getErrorMessage(err));
       });
+
+    api
+      .get<ApprenantAvecPoste[]>(`/admin/projets/${projetId}/postes`)
+      .then((response) => setPostes(response.data))
+      .catch(() => setPostes([]));
   }, [projetId]);
 
   const handleNoted = (updated: Soumission) => {
     setSoumissions((current) =>
       (current ?? []).map((s) => (s.id === updated.id ? updated : s)),
     );
+  };
+
+  const handlePosteChange = async (apprenantId: string, poste: PosteProjet) => {
+    // Optimiste : le badge change tout de suite, on ne bloque pas sur le réseau.
+    const previous = postes;
+    setPostes((current) =>
+      (current ?? []).map((entry) =>
+        entry.apprenant.id === apprenantId ? { ...entry, poste } : entry,
+      ),
+    );
+    try {
+      await api.patch(`/admin/projets/${projetId}/postes/${apprenantId}`, { poste });
+    } catch (err) {
+      setPostes(previous);
+      setError(getErrorMessage(err));
+    }
   };
 
   return (
@@ -146,6 +169,45 @@ export default function ProjetSoumissionsView({
         </div>
       )}
 
+      <div className="bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl p-6 flex flex-col gap-4">
+        <h2 className="text-lg font-bold text-(--theme-text-primary) flex items-center gap-2">
+          <Users size={18} />
+          Postes de l&apos;équipe
+        </h2>
+        {postes === null ? (
+          <p className="text-sm text-(--theme-text-secondary)">Chargement...</p>
+        ) : postes.length === 0 ? (
+          <p className="text-sm text-(--theme-text-secondary)">Aucun apprenant dans cette promotion.</p>
+        ) : (
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {postes.map(({ apprenant, poste }) => (
+              <li
+                key={apprenant.id}
+                className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg bg-(--theme-surface-muted)"
+              >
+                <span className="text-sm text-(--theme-text-primary) truncate">
+                  {apprenant.firstname} {apprenant.lastname}
+                </span>
+                <select
+                  value={poste ?? ""}
+                  onChange={(e) => handlePosteChange(apprenant.id, e.target.value as PosteProjet)}
+                  className="shrink-0 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-(--theme-border-strong) bg-(--theme-input-bg) text-(--theme-text-primary) outline-none"
+                >
+                  <option value="" disabled>
+                    Non assigné
+                  </option>
+                  {POSTE_PROJET_OPTIONS.map((option) => (
+                    <option key={option} value={option}>
+                      {POSTE_PROJET_LABELS[option]}
+                    </option>
+                  ))}
+                </select>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
       {soumissions === null ? (
         <p className="text-sm text-(--theme-text-secondary)">Chargement...</p>
       ) : soumissions.length === 0 ? (
@@ -159,14 +221,24 @@ export default function ProjetSoumissionsView({
               key={soumission.id}
               className="bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl p-5 flex flex-col gap-2"
             >
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-(--theme-text-primary)">
-                  {soumission.apprenant
-                    ? `${soumission.apprenant.firstname} ${soumission.apprenant.lastname}`
-                    : "Apprenant"}
+              <div className="flex items-center justify-between gap-2">
+                <span className="flex items-center gap-2 min-w-0">
+                  <span className="text-sm font-bold text-(--theme-text-primary) truncate">
+                    {soumission.apprenant
+                      ? `${soumission.apprenant.firstname} ${soumission.apprenant.lastname}`
+                      : "Apprenant"}
+                  </span>
+                  {(() => {
+                    const poste = postes?.find((p) => p.apprenant.id === soumission.apprenantId)?.poste;
+                    return poste ? (
+                      <span className="shrink-0 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-(--theme-surface-muted) text-(--theme-text-secondary)">
+                        {POSTE_PROJET_LABELS[poste]}
+                      </span>
+                    ) : null;
+                  })()}
                 </span>
                 {soumission.note != null && (
-                  <span className="text-xs font-black px-2.5 py-1 rounded-md bg-(--theme-primary)/10 text-(--theme-primary)">
+                  <span className="shrink-0 text-xs font-black px-2.5 py-1 rounded-md bg-(--theme-primary)/10 text-(--theme-primary)">
                     {soumission.note}/20
                   </span>
                 )}

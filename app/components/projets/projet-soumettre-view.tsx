@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, ArrowLeft, Award, Loader2, Send } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Award, Loader2, Send, Users } from "lucide-react";
 import { z } from "zod";
 import api from "@/lib/api";
 import { getErrorMessage } from "@/lib/get-error-message";
-import type { ProjetPourApprenant, Soumission } from "@/lib/types/projet";
+import type { PosteProjet, ProjetPourApprenant, Soumission } from "@/lib/types/projet";
+import { POSTE_PROJET_LABELS, POSTE_PROJET_OPTIONS } from "@/lib/types/projet";
 
 const soumissionSchema = z.object({
   lienGithub: z.string().url("Lien GitHub invalide").includes("github.com", {
@@ -97,6 +98,18 @@ export default function ProjetSoumettreView({ projetId }: { projetId: string }) 
     }
   };
 
+  const handlePosteChange = async (poste: PosteProjet) => {
+    // Optimiste : le poste change tout de suite dans l'UI, sans attendre le réseau.
+    const previous = projet;
+    setProjet((current) => (current ? { ...current, maPoste: poste } : current));
+    try {
+      await api.patch(`/projets/${projetId}/poste`, { poste });
+    } catch (err) {
+      setProjet(previous);
+      setMessage(getErrorMessage(err));
+    }
+  };
+
   if (loadError) {
     return (
       <main className="flex-1 p-8 overflow-y-auto">
@@ -108,7 +121,7 @@ export default function ProjetSoumettreView({ projetId }: { projetId: string }) 
   const dejaEvalue = projet?.statut === "evalue";
 
   return (
-    <main className="flex-1 p-8 overflow-y-auto flex flex-col gap-6 max-w-3xl">
+    <main className="flex-1 p-8 overflow-y-auto flex flex-col gap-6 max-w-3xl mx-auto w-full">
       <Link
         href="/dashboard/student/projets"
         className="flex items-center gap-2 text-sm text-(--theme-text-secondary) hover:text-(--theme-text-primary) w-fit"
@@ -129,6 +142,28 @@ export default function ProjetSoumettreView({ projetId }: { projetId: string }) 
           >
             Date limite : {formatDateHeure(projet.dateLimite)}
           </p>
+
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-(--theme-border)">
+            <Users size={14} className="text-(--theme-text-secondary) shrink-0" />
+            <label className="text-xs font-semibold text-(--theme-text-primary) shrink-0">
+              Mon poste sur ce projet
+            </label>
+            <select
+              value={projet.maPoste ?? ""}
+              onChange={(e) => handlePosteChange(e.target.value as PosteProjet)}
+              disabled={dejaEvalue}
+              className="text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-(--theme-border-strong) bg-(--theme-input-bg) text-(--theme-text-primary) outline-none disabled:opacity-70"
+            >
+              <option value="" disabled>
+                Non choisi
+              </option>
+              {POSTE_PROJET_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {POSTE_PROJET_LABELS[option]}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       )}
 

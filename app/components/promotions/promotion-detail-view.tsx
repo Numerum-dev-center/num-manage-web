@@ -45,7 +45,6 @@ export default function PromotionDetailView({
   const [errors, setErrors] = useState<Record<string, string | undefined>>({});
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [isAssigning, setIsAssigning] = useState(false);
 
   const loadPromotion = () => {
     api
@@ -132,10 +131,19 @@ export default function PromotionDetailView({
   };
 
   const handleRemoveApprenant = async (userId: string) => {
+    // Retrait optimiste : on met à jour la liste immédiatement pour ne pas
+    // bloquer le clic sur un autre apprenant pendant l'appel réseau ; on
+    // remet l'apprenant en cas d'échec.
+    const previous = promotion;
+    setPromotion((current) =>
+      current && current.apprenants
+        ? { ...current, apprenants: current.apprenants.filter((a) => a.id !== userId) }
+        : current
+    );
     try {
       await api.delete(`/promotions/${promotionId}/apprenants/${userId}`);
-      loadPromotion();
     } catch (err) {
+      setPromotion(previous);
       setMessage({ type: "error", text: getErrorMessage(err) });
     }
   };
@@ -148,18 +156,24 @@ export default function PromotionDetailView({
 
   const handleAssign = async () => {
     if (selectedIds.length === 0) return;
-    setIsAssigning(true);
+    // Affectation optimiste : la liste et le panneau se mettent à jour tout
+    // de suite, sans attendre la réponse réseau ; on revient en arrière en
+    // cas d'échec.
+    const idsToAssign = selectedIds;
+    const previous = promotion;
+    const newlyAssigned = (allApprenants ?? []).filter((a) => idsToAssign.includes(a.id));
+    setPromotion((current) =>
+      current ? { ...current, apprenants: [...(current.apprenants ?? []), ...newlyAssigned] } : current
+    );
+    setSelectedIds([]);
+    setShowAddApprenant(false);
     setMessage(null);
     try {
-      await api.patch(`/promotions/${promotionId}/apprenants`, { apprenantIds: selectedIds });
-      setSelectedIds([]);
-      setShowAddApprenant(false);
+      await api.patch(`/promotions/${promotionId}/apprenants`, { apprenantIds: idsToAssign });
       setMessage({ type: "success", text: "Apprenants affectés avec succès" });
-      loadPromotion();
     } catch (err) {
+      setPromotion(previous);
       setMessage({ type: "error", text: getErrorMessage(err) });
-    } finally {
-      setIsAssigning(false);
     }
   };
 
@@ -175,7 +189,7 @@ export default function PromotionDetailView({
   const availableApprenants = (allApprenants ?? []).filter((a) => !assignedIds.has(a.id));
 
   return (
-    <main className="flex-1 p-8 overflow-y-auto flex flex-col gap-6 max-w-4xl">
+    <main className="flex-1 p-8 overflow-y-auto flex flex-col gap-6 max-w-4xl mx-auto w-full">
       <Link
         href={basePath}
         className="flex items-center gap-2 text-sm text-(--theme-text-secondary) hover:text-(--theme-text-primary) w-fit"
@@ -372,11 +386,11 @@ export default function PromotionDetailView({
                 <button
                   type="button"
                   onClick={handleAssign}
-                  disabled={isAssigning || selectedIds.length === 0}
+                  disabled={selectedIds.length === 0}
                   className="self-start flex items-center gap-2 px-4 py-2.5 rounded-lg bg-(--theme-primary) text-(--theme-text-inverse) text-sm font-semibold hover:bg-(--theme-primary-hover) transition-colors disabled:opacity-70"
                 >
-                  {isAssigning ? <Loader2 size={16} className="animate-spin" /> : <UserPlus size={16} />}
-                  {isAssigning ? "Affectation..." : `Confirmer (${selectedIds.length})`}
+                  <UserPlus size={16} />
+                  {`Confirmer (${selectedIds.length})`}
                 </button>
               </>
             )}

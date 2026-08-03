@@ -2,6 +2,26 @@ import type { FormateurSummary } from "./promotion";
 
 export type StatutProjet = "non_commence" | "en_cours" | "soumis" | "evalue";
 
+export type PosteProjet = "frontend" | "backend" | "fullstack" | "lead" | "devops" | "designer";
+
+export const POSTE_PROJET_OPTIONS: PosteProjet[] = [
+  "frontend",
+  "backend",
+  "fullstack",
+  "lead",
+  "devops",
+  "designer",
+];
+
+export const POSTE_PROJET_LABELS: Record<PosteProjet, string> = {
+  frontend: "Frontend Developer",
+  backend: "Backend Developer",
+  fullstack: "Fullstack Developer",
+  lead: "Lead",
+  devops: "DevOps",
+  designer: "Designer",
+};
+
 export interface PromotionOption {
   id: string;
   name: string;
@@ -56,4 +76,11 @@ export interface ProjetPourApprenant extends Projet {
   statut: StatutProjet;
   enRetard: boolean;
   maSoumission: Soumission | null;
+  maPoste: PosteProjet | null;
+}
+
+/** Vue formateur/admin (GET /admin/projets/:id/postes) : roster de la promotion avec poste éventuel. */
+export interface ApprenantAvecPoste {
+  apprenant: ApprenantSoumissionSummary;
+  poste: PosteProjet | null;
 }

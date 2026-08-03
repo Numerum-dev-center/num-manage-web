@@ -6,6 +6,7 @@ import { ArrowRight, Award, Calendar, FolderGit2, Upload, User } from "lucide-re
 import api from "@/lib/api";
 import { getErrorMessage } from "@/lib/get-error-message";
 import type { ProjetPourApprenant } from "@/lib/types/projet";
+import { POSTE_PROJET_LABELS } from "@/lib/types/projet";
 import StatutStepper from "./statut-stepper";
 
 function formatDateHeure(value: string): string {
@@ -68,6 +69,11 @@ export default function ProjetsStudentView() {
                   <User size={13} />
                   {projet.createdBy ? `${projet.createdBy.firstname} ${projet.createdBy.lastname}` : "Formateur"}
                 </span>
+                {projet.maPoste && (
+                  <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full bg-(--theme-surface-muted) text-(--theme-text-secondary)">
+                    {POSTE_PROJET_LABELS[projet.maPoste]}
+                  </span>
+                )}
               </div>
 
               <div>
