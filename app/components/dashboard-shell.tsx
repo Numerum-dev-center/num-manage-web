@@ -4,9 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  BookOpen,
   Calendar,
-  ChevronRight,
   ClipboardList,
   FileSpreadsheet,
   FileText,
@@ -34,7 +32,6 @@ type SidebarItem = {
   href?: string;
   upcoming?: boolean;
   badge?: string;
-  subItems?: Array<{ label: string }>;
 };
 
 interface SidebarConfig {
@@ -58,11 +55,6 @@ function buildSidebarConfig(counts: { total: number; students: number } | null):
         { label: "Overview", icon: Grid, href: "/dashboard/student" },
         { label: "Ma promotion", icon: GraduationCap, href: "/dashboard/student/promotion" },
         { label: "Ressources", icon: FileText, href: "/dashboard/student/ressources" },
-        {
-          label: "Ma formation",
-          icon: BookOpen,
-          subItems: [{ label: "En cours" }, { label: "Terminées" }],
-        },
         { label: "Annonces", icon: Megaphone, href: "/dashboard/student/annonces" },
         { label: "Projets", icon: ClipboardList, href: "/dashboard/student/projets" },
         { label: "Présences", icon: Calendar, upcoming: true },
@@ -136,7 +128,6 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const pathname = usePathname();
-  const [isFormationOpen, setIsFormationOpen] = useState(true);
   const [counts, setCounts] = useState<{ total: number; students: number } | null>(null);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
@@ -256,37 +247,6 @@ export default function DashboardShell({ children }: { children: React.ReactNode
                         Bientôt
                       </span>
                     </span>
-                  </div>
-                );
-              }
-
-              if (item.subItems) {
-                return (
-                  <div key={index}>
-                    <button
-                      type="button"
-                      onClick={() => setIsFormationOpen((current) => !current)}
-                      className="w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium text-(--theme-sidebar-muted) hover:bg-(--theme-sidebar-hover) hover:text-(--theme-text-inverse) transition"
-                    >
-                      <span className="flex items-center gap-3">
-                        <item.icon size={18} />
-                        {item.label}
-                      </span>
-                      <ChevronRight size={14} className={`transition-transform ${isFormationOpen ? "rotate-90" : ""}`} />
-                    </button>
-
-                    {isFormationOpen && (
-                      <div className="flex flex-col pl-9 mt-1 gap-1 border-l border-(--theme-sidebar-border) ml-5">
-                        {item.subItems.map((subItem, subIndex) => (
-                          <button
-                            key={subIndex}
-                            className="text-left py-1.5 text-sm text-(--theme-sidebar-muted) hover:text-(--theme-accent) transition"
-                          >
-                            {subItem.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 );
               }

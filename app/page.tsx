@@ -10,6 +10,13 @@ import {
 } from 'lucide-react';
 import { siReact, siNextdotjs, siNestjs, siTypescript, siMysql, siTailwindcss, siDocker, siGit } from 'simple-icons';
 import ThemeToggle from '@/app/components/theme-toggle';
+import { useAuthStore } from '@/lib/stores/auth.store';
+
+const ROLE_HOME: Record<string, string> = {
+  admin: '/dashboard/admin',
+  manager: '/dashboard/manager',
+  student: '/dashboard/student',
+};
 
 function TechIcon({ path }: { path: string }) {
   return (
@@ -90,6 +97,8 @@ const PROGRAMMES = [
 
 export default function LandingPage() {
   const router = useRouter();
+  const user = useAuthStore((state) => state.user);
+  const dashboardHref = user ? (ROLE_HOME[user.role] ?? '/dashboard') : null;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const hoverUnderlineStyle = "relative pb-1 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-(--theme-primary) after:transition-all after:duration-300 hover:after:w-full cursor-pointer";
@@ -138,12 +147,20 @@ export default function LandingPage() {
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle className={!scrolled ? 'text-white!' : ''} />
 
-            <button  onClick={() => router.push('/auth/register')} className="flex items-center gap-2 px-5 py-2.5 bg-(--theme-primary) text-(--theme-text-inverse) rounded-xl text-sm font-bold shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all">
-              Inscription <ChevronRight size={16} />
-            </button>
-            <button  onClick={() => router.push('/auth/login')} className={`text-sm font-bold transition-colors duration-500 hover:opacity-80 ${scrolled ? 'text-(--theme-text-primary)' : 'text-white'}`}>
-              Connexion
-            </button>
+            {dashboardHref ? (
+              <button onClick={() => router.push(dashboardHref)} className="flex items-center gap-2 px-5 py-2.5 bg-(--theme-primary) text-(--theme-text-inverse) rounded-xl text-sm font-bold shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all">
+                Mon espace <ChevronRight size={16} />
+              </button>
+            ) : (
+              <>
+                <button  onClick={() => router.push('/auth/register')} className="flex items-center gap-2 px-5 py-2.5 bg-(--theme-primary) text-(--theme-text-inverse) rounded-xl text-sm font-bold shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all">
+                  Inscription <ChevronRight size={16} />
+                </button>
+                <button  onClick={() => router.push('/auth/login')} className={`text-sm font-bold transition-colors duration-500 hover:opacity-80 ${scrolled ? 'text-(--theme-text-primary)' : 'text-white'}`}>
+                  Connexion
+                </button>
+              </>
+            )}
           </div>
 
           {/* Bouton Mobile */}
@@ -162,8 +179,14 @@ export default function LandingPage() {
             <a href="#programmes" onClick={() => setMobileMenuOpen(false)} className="text-lg font-semibold">Parcours</a>
             <a href="#stats" onClick={() => setMobileMenuOpen(false)} className="text-lg font-semibold">Impact</a>
             <a href="#temoignages" onClick={() => setMobileMenuOpen(false)} className="text-lg font-semibold">Témoignages</a>
-            <button onClick={() => { setMobileMenuOpen(false); router.push('/auth/login'); }} className="w-full py-3 border border-(--theme-border-strong) rounded-xl font-bold">Connexion</button>
-            <button onClick={() => { setMobileMenuOpen(false); router.push('/auth/register'); }} className="w-full py-3 bg-(--theme-accent) text-(--theme-text-inverse) rounded-xl font-bold shadow-lg">Rejoindre le centre</button>
+            {dashboardHref ? (
+              <button onClick={() => { setMobileMenuOpen(false); router.push(dashboardHref); }} className="w-full py-3 bg-(--theme-accent) text-(--theme-text-inverse) rounded-xl font-bold shadow-lg">Mon espace</button>
+            ) : (
+              <>
+                <button onClick={() => { setMobileMenuOpen(false); router.push('/auth/login'); }} className="w-full py-3 border border-(--theme-border-strong) rounded-xl font-bold">Connexion</button>
+                <button onClick={() => { setMobileMenuOpen(false); router.push('/auth/register'); }} className="w-full py-3 bg-(--theme-accent) text-(--theme-text-inverse) rounded-xl font-bold shadow-lg">Rejoindre le centre</button>
+              </>
+            )}
           </div>
         )}
       </header>

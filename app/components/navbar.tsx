@@ -2,6 +2,7 @@
 "use client";
 
 import React from 'react';
+import Link from 'next/link';
 import { Search, Bell, Menu } from 'lucide-react';
 import { useAuthStore } from '@/lib/stores/auth.store';
 import ThemeToggle from './theme-toggle';
@@ -48,7 +49,7 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
         <div className="w-px h-6 bg-(--theme-border)" />
 
         {/* Bloc Profil (déconnexion : bouton unique en bas de la sidebar) */}
-        <div className="flex items-center gap-3 group">
+        <Link href="/dashboard/profile" className="flex items-center gap-3 group">
           <div className="w-9 h-9 rounded-full bg-(--theme-primary)/10 border border-(--theme-border) flex items-center justify-center text-(--theme-primary) font-bold text-sm shrink-0">
             {user!.firstname.split(' ').map((n) => n[0]).join('')}
           </div>
@@ -58,7 +59,7 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
             </span>
             <span className="text-[10px] text-(--theme-text-secondary) font-medium uppercase tracking-wider">Connecté</span>
           </div>
-        </div>
+        </Link>
       </div>
     </header>
   );
