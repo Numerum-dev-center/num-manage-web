@@ -185,8 +185,10 @@ export default function PromotionDetailView({
     );
   }
 
-  const assignedIds = new Set(promotion.apprenants?.map((a) => a.id));
-  const availableApprenants = (allApprenants ?? []).filter((a) => !assignedIds.has(a.id));
+  // Un apprenant n'appartient qu'à une seule promotion : on n'affiche ici que
+  // ceux qui n'en ont encore aucune, pour ne jamais en retirer une autre par
+  // erreur en le réaffectant silencieusement ici.
+  const availableApprenants = (allApprenants ?? []).filter((a) => !a.promotionId);
 
   return (
     <main className="flex-1 p-8 overflow-y-auto flex flex-col gap-6 max-w-4xl mx-auto w-full">

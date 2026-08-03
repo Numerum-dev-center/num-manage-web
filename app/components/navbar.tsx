@@ -3,10 +3,11 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Search, Bell, Menu } from 'lucide-react';
+import { Search, Menu } from 'lucide-react';
 import { useAuthStore } from '@/lib/stores/auth.store';
 import { getAvatarUrl } from '@/lib/get-avatar-url';
 import ThemeToggle from './theme-toggle';
+import NotificationBell from './notification-bell';
 
 export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const user = useAuthStore((state) => state.user);
@@ -41,10 +42,7 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
       <div className="flex items-center gap-3 md:gap-6 min-w-0">
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <button className="p-2 rounded-xl hover:bg-(--theme-surface-muted) text-(--theme-text-secondary) hover:text-(--theme-text-primary) relative transition-colors">
-            <Bell size={18} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-(--theme-accent) rounded-full" />
-          </button>
+          <NotificationBell />
         </div>
 
         <div className="w-px h-6 bg-(--theme-border)" />

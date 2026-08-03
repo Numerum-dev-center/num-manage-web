@@ -185,6 +185,31 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     router.push("/auth/login");
   };
 
+  // Déconnexion automatique après une période d'inactivité, pour ne pas
+  // laisser une session ouverte indéfiniment sur un poste partagé.
+  const IDLE_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+  useEffect(() => {
+    if (!user) return;
+
+    let timeoutId: ReturnType<typeof setTimeout>;
+    const resetTimer = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        handleLogout();
+      }, IDLE_TIMEOUT_MS);
+    };
+
+    const activityEvents = ["mousemove", "keydown", "click", "scroll", "touchstart"];
+    activityEvents.forEach((event) => window.addEventListener(event, resetTimer));
+    resetTimer();
+
+    return () => {
+      clearTimeout(timeoutId);
+      activityEvents.forEach((event) => window.removeEventListener(event, resetTimer));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
   return (
     <div className="min-h-screen w-full flex bg-(--theme-page-bg) text-(--theme-text-primary) antialiased transition-colors duration-300 overflow-x-hidden">
       {/* Fond assombri derrière le tiroir de navigation mobile */}

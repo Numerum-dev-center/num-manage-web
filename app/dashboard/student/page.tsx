@@ -3,29 +3,68 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Search, Bell, GraduationCap, Calendar, Megaphone, ClipboardList } from "lucide-react";
+import { Search, GraduationCap, Calendar, Megaphone, ClipboardList } from "lucide-react";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { getAvatarUrl } from "@/lib/get-avatar-url";
 import api from "@/lib/api";
 import type { Promotion } from "@/lib/types/promotion";
-
-const UPCOMING = [
-  { title: "Annonces", icon: Megaphone, sprint: "S5", description: "Les annonces de vos formateurs seront diffusées ici." },
-  { title: "Présences", icon: Calendar, sprint: "S6", description: "Émargement et historique de présence par QR Code." },
-  { title: "Projets", icon: ClipboardList, sprint: "S7", description: "Vos projets et rendus de soumissions." },
-];
+import type { Annonce } from "@/lib/types/annonce";
+import type { ProjetPourApprenant } from "@/lib/types/projet";
 
 export default function StudentDashboard() {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const [promotion, setPromotion] = useState<Promotion | null | undefined>(undefined);
+  const [annoncesCount, setAnnoncesCount] = useState<number | null>(null);
+  const [projetsEnCours, setProjetsEnCours] = useState<number | null>(null);
 
   useEffect(() => {
     api
       .get<{ promotion: Promotion | null }>("/mon-espace/ma-promotion")
       .then((response) => setPromotion(response.data.promotion))
       .catch(() => setPromotion(null));
+
+    api
+      .get<Annonce[]>("/mon-espace/annonces")
+      .then((response) => setAnnoncesCount(response.data.length))
+      .catch(() => setAnnoncesCount(null));
+
+    api
+      .get<ProjetPourApprenant[]>("/projets")
+      .then((response) => setProjetsEnCours(response.data.filter((p) => p.statut === "en_cours").length))
+      .catch(() => setProjetsEnCours(null));
   }, []);
+
+  const UPCOMING = [
+    {
+      title: "Annonces",
+      icon: Megaphone,
+      href: "/dashboard/student/annonces",
+      description:
+        annoncesCount === null
+          ? "Les annonces de vos formateurs."
+          : annoncesCount === 0
+            ? "Aucune annonce pour le moment."
+            : `${annoncesCount} annonce${annoncesCount > 1 ? "s" : ""} à consulter.`,
+    },
+    {
+      title: "Présences",
+      icon: Calendar,
+      href: "/mon-espace/presences",
+      description: "Émargement et historique de présence.",
+    },
+    {
+      title: "Projets",
+      icon: ClipboardList,
+      href: "/dashboard/student/projets",
+      description:
+        projetsEnCours === null
+          ? "Vos projets et rendus de soumissions."
+          : projetsEnCours === 0
+            ? "Aucun projet en cours."
+            : `${projetsEnCours} projet${projetsEnCours > 1 ? "s" : ""} en cours.`,
+    },
+  ];
 
   return (
     <div className="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden">
@@ -43,27 +82,22 @@ export default function StudentDashboard() {
               />
               <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-(--theme-text-secondary)" size={16} />
             </div>
-            <button className="p-2.5 rounded-xl border border-(--theme-border) bg-(--theme-card-bg) hover:bg-(--theme-surface-muted) relative transition-colors">
-              <Bell size={18} className="text-(--theme-text-primary)" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-(--theme-accent) rounded-full" />
-            </button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {UPCOMING.map((item, idx) => (
-            <div key={idx} className="p-6 rounded-2xl bg-(--theme-card-bg) border border-dashed border-(--theme-border) flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-(--theme-text-primary)">
-                  <item.icon size={18} />
-                  <h3 className="text-sm font-bold">{item.title}</h3>
-                </div>
-                <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-(--theme-surface-muted) text-(--theme-text-secondary)">
-                  {item.sprint}
-                </span>
+            <Link
+              key={idx}
+              href={item.href}
+              className="p-6 rounded-2xl bg-(--theme-card-bg) border border-(--theme-border) flex flex-col gap-3 hover:border-(--theme-primary) transition-colors"
+            >
+              <div className="flex items-center gap-2 text-(--theme-text-primary)">
+                <item.icon size={18} />
+                <h3 className="text-sm font-bold">{item.title}</h3>
               </div>
               <p className="text-xs text-(--theme-text-secondary) leading-relaxed">{item.description}</p>
-            </div>
+            </Link>
           ))}
         </div>
 
@@ -90,7 +124,7 @@ export default function StudentDashboard() {
         </div>
       </main>
 
-      <aside className="w-full md:w-80 bg-(--theme-card-bg) border-t md:border-t-0 md:border-l border-(--theme-border) p-6 flex flex-col gap-8 md:overflow-y-auto shrink-0">
+      <aside className="hidden md:flex md:w-80 bg-(--theme-card-bg) border-t md:border-t-0 md:border-l border-(--theme-border) p-6 flex-col gap-8 md:overflow-y-auto shrink-0">
         <div className="flex flex-col items-center text-center p-6 bg-(--theme-surface-muted) rounded-2xl border border-(--theme-border)">
           <div className="w-20 h-20 rounded-full bg-(--theme-primary) text-(--theme-text-inverse) flex items-center justify-center text-2xl font-bold mb-3 overflow-hidden">
             {getAvatarUrl(user?.avatarUrl) ? (

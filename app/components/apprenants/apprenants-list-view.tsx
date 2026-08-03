@@ -66,7 +66,7 @@ export default function ApprenantsListView({ basePath }: { basePath: string }) {
           <option value="none">Sans promotion</option>
           {promotions?.map((promotion) => (
             <option key={promotion.id} value={promotion.id}>
-              {promotion.name}
+              {promotion.name} ({promotion.apprenants?.length ?? 0})
             </option>
           ))}
         </select>

@@ -88,7 +88,7 @@ export default function ProjetCreateView({ basePath }: { basePath: string }) {
       <div>
         <h1 className="text-2xl font-bold text-(--theme-text-primary)">Nouveau projet</h1>
         <p className="text-sm text-(--theme-text-secondary) mt-1">
-          Assignez un projet pratique à une promotion, avec une date limite de rendu.
+          Créez le projet pour une promotion, puis affectez explicitement les apprenants concernés sur la page suivante.
         </p>
       </div>
 
