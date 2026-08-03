@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Search, Bell, GraduationCap, Calendar, Megaphone, ClipboardList } from "lucide-react";
 import { useAuthStore } from "@/lib/stores/auth.store";
+import { getAvatarUrl } from "@/lib/get-avatar-url";
 import api from "@/lib/api";
 import type { Promotion } from "@/lib/types/promotion";
 
@@ -91,8 +92,14 @@ export default function StudentDashboard() {
 
       <aside className="w-full md:w-80 bg-(--theme-card-bg) border-t md:border-t-0 md:border-l border-(--theme-border) p-6 flex flex-col gap-8 md:overflow-y-auto shrink-0">
         <div className="flex flex-col items-center text-center p-6 bg-(--theme-surface-muted) rounded-2xl border border-(--theme-border)">
-          <div className="w-20 h-20 rounded-full bg-(--theme-primary) text-(--theme-text-inverse) flex items-center justify-center text-2xl font-bold mb-3">
-            {user ? `${user.firstname[0] ?? ""}${user.lastname[0] ?? ""}`.toUpperCase() : "?"}
+          <div className="w-20 h-20 rounded-full bg-(--theme-primary) text-(--theme-text-inverse) flex items-center justify-center text-2xl font-bold mb-3 overflow-hidden">
+            {getAvatarUrl(user?.avatarUrl) ? (
+              <img src={getAvatarUrl(user?.avatarUrl)!} alt="" className="w-full h-full object-cover" />
+            ) : user ? (
+              `${user.firstname[0] ?? ""}${user.lastname[0] ?? ""}`.toUpperCase()
+            ) : (
+              "?"
+            )}
           </div>
           <h2 className="text-lg font-bold text-(--theme-text-primary)">
             {user ? `${user.firstname} ${user.lastname}` : "..."}

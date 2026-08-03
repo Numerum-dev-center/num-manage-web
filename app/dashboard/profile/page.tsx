@@ -5,6 +5,7 @@ import { Camera, Loader2 } from "lucide-react";
 import api from "@/lib/api";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { getAvatarUrl } from "@/lib/get-avatar-url";
 import { z } from "zod";
 
 const profileSchema = z.object({
@@ -162,6 +163,14 @@ export default function ProfilePage() {
     }
     setIsLoading(true);
     try {
+      if (avatarFile) {
+        const avatarFormData = new FormData();
+        avatarFormData.append("avatar", avatarFile);
+        await api.post("/users/me/avatar", avatarFormData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      }
+
       const response = await api.patch(
         "/users/me",
         result.data
@@ -170,11 +179,11 @@ export default function ProfilePage() {
         response.data,
         accessToken!
       );
+      setAvatarFile(null);
+      setAvatarPreview(null);
       setMessage({
         type: "success",
-        text: avatarFile
-          ? "Profil mis à jour. L'enregistrement de la photo sera bientôt disponible."
-          : "Profil mis à jour avec succès",
+        text: "Profil mis à jour avec succès",
       });
     } catch (err) {
       setMessage({
@@ -209,10 +218,10 @@ export default function ProfilePage() {
           <div className="flex items-end -mt-12 mb-6">
             <div className="relative">
               <div className="w-24 h-24 rounded-full border-4 border-(--theme-card-bg) bg-(--theme-text-secondary)/20 overflow-hidden flex items-center justify-center">
-                {avatarPreview ? (
+                {avatarPreview || getAvatarUrl(user?.avatarUrl) ? (
 
                   <img
-                    src={avatarPreview}
+                    src={avatarPreview ?? getAvatarUrl(user?.avatarUrl)!}
                     alt="Photo profil"
                     className="w-full h-full object-cover"
                   />

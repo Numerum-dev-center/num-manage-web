@@ -5,6 +5,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Search, Bell, Menu } from 'lucide-react';
 import { useAuthStore } from '@/lib/stores/auth.store';
+import { getAvatarUrl } from '@/lib/get-avatar-url';
 import ThemeToggle from './theme-toggle';
 
 export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
@@ -50,8 +51,12 @@ export default function Navbar({ onMenuClick }: { onMenuClick?: () => void }) {
 
         {/* Bloc Profil (déconnexion : bouton unique en bas de la sidebar) */}
         <Link href="/dashboard/profile" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-full bg-(--theme-primary)/10 border border-(--theme-border) flex items-center justify-center text-(--theme-primary) font-bold text-sm shrink-0">
-            {user!.firstname.split(' ').map((n) => n[0]).join('')}
+          <div className="w-9 h-9 rounded-full bg-(--theme-primary)/10 border border-(--theme-border) flex items-center justify-center text-(--theme-primary) font-bold text-sm shrink-0 overflow-hidden">
+            {getAvatarUrl(user!.avatarUrl) ? (
+              <img src={getAvatarUrl(user!.avatarUrl)!} alt="" className="w-full h-full object-cover" />
+            ) : (
+              user!.firstname.split(' ').map((n) => n[0]).join('')
+            )}
           </div>
           <div className="flex flex-col text-left">
             <span className={`text-sm font-bold text-(--theme-text-primary) ${hoverUnderlineStyle}`}>

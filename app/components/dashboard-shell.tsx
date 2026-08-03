@@ -24,6 +24,7 @@ import {
 import Navbar from "./navbar";
 import type { LucideIcon } from "lucide-react";
 import { useAuthStore } from "@/lib/stores/auth.store";
+import { getAvatarUrl } from "@/lib/get-avatar-url";
 import api from "@/lib/api";
 
 type SidebarItem = {
@@ -296,8 +297,12 @@ export default function DashboardShell({ children }: { children: React.ReactNode
             )}
 
             <div className="flex items-center gap-3 px-3 py-2 rounded-2xl bg-(--theme-sidebar-hover)">
-              <div className="w-8 h-8 rounded-full bg-(--theme-sidebar-border) flex items-center justify-center text-(--theme-text-inverse) shrink-0">
-                <User size={16} />
+              <div className="w-8 h-8 rounded-full bg-(--theme-sidebar-border) flex items-center justify-center text-(--theme-text-inverse) shrink-0 overflow-hidden">
+                {getAvatarUrl(user?.avatarUrl) ? (
+                  <img src={getAvatarUrl(user?.avatarUrl)!} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <User size={16} />
+                )}
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-(--theme-text-inverse) truncate">{user ? `${user.firstname} ${user.lastname}` : "..."}</p>
