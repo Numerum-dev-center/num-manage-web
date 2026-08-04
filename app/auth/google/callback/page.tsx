@@ -24,9 +24,13 @@ function GoogleCallbackContent() {
       })
       .then((response) => {
         const user = response.data;
-        setAuth(user, localStorage.getItem('accessToken') ?? '');
+        const normalizedUser = {
+          ...user,
+          role: user.role === 'manager' || user.role === 'admin' || user.role === 'student' ? user.role : 'student',
+        };
+        setAuth(normalizedUser, localStorage.getItem('accessToken') ?? '');
 
-        switch (user.role) {
+        switch (normalizedUser.role) {
           case "admin":
             router.replace("/dashboard/admin");
             break;

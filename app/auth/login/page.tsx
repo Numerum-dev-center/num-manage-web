@@ -51,10 +51,14 @@ export default function LoginPage() {
     try {
       const response = await api.post('/auth/login', result.data);
       const { accessToken, user } = response.data;
-      setAuth(user, accessToken);
+      const normalizedUser = {
+        ...user,
+        role: user.role === 'manager' || user.role === 'admin' || user.role === 'student' ? user.role : 'student',
+      };
+      setAuth(normalizedUser, accessToken);
       localStorage.setItem('accessToken', accessToken);
 
-      switch (user.role) {
+      switch (normalizedUser.role) {
         case 'admin':
           router.push('/dashboard/admin');
           break;
