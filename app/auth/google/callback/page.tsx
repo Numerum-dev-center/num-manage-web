@@ -14,6 +14,33 @@ function GoogleCallbackContent() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const finalizeAuth = (user: { role?: string } | null, accessToken: string) => {
+      const normalizedUser = {
+        ...(user ?? {
+          id: '',
+          email: '',
+          firstname: 'Utilisateur',
+          lastname: '',
+          role: 'student',
+        }),
+        role: user?.role === 'manager' || user?.role === 'admin' || user?.role === 'student' ? user.role : 'student',
+      };
+      setAuth(normalizedUser as { id: string; email: string; firstname: string; lastname: string; role: 'admin' | 'manager' | 'student'; avatarUrl?: string | null }, accessToken);
+
+      switch (normalizedUser.role) {
+        case "admin":
+          router.replace("/dashboard/admin");
+          break;
+        case "manager":
+          router.replace("/dashboard/manager");
+          break;
+        case "student":
+        default:
+          router.replace("/dashboard/student");
+          break;
+      }
+    };
+
     api
       .post('/auth/refresh')
       .then((refreshResponse) => {
@@ -24,27 +51,15 @@ function GoogleCallbackContent() {
       })
       .then((response) => {
         const user = response.data;
-        const normalizedUser = {
-          ...user,
-          role: user.role === 'manager' || user.role === 'admin' || user.role === 'student' ? user.role : 'student',
-        };
-        setAuth(normalizedUser, localStorage.getItem('accessToken') ?? '');
-
-        switch (normalizedUser.role) {
-          case "admin":
-            router.replace("/dashboard/admin");
-            break;
-          case "manager":
-            router.replace("/dashboard/manager");
-            break;
-          case "student":
-            router.replace("/dashboard/student");
-            break;
-          default:
-            router.replace("/");
-        }
+        finalizeAuth(user, localStorage.getItem('accessToken') ?? '');
       })
       .catch((err) => {
+        const fallbackToken = localStorage.getItem('accessToken') ?? '';
+        if (fallbackToken) {
+          finalizeAuth(null, fallbackToken);
+          return;
+        }
+
         localStorage.removeItem("accessToken");
         setError(getErrorMessage(err, "Impossible de récupérer le profil après connexion Google"));
       });
