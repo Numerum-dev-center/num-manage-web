@@ -10,7 +10,7 @@ import { useAuthStore } from '@/lib/stores/auth.store';
 import AuthLayout from '../components/auth-layout';
 import { getErrorMessage } from '@/lib/get-error-message';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 
 const loginSchema = z.object({
   email: z.string().email("Adresse email invalide"),
@@ -144,7 +144,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => {
-              window.location.href = `${API_URL}/auth/google`;
+              window.location.href = `${API_BASE_URL}/auth/google`;
             }}
             className="w-full bg-(--theme-card-bg) border border-(--theme-border-strong) text-(--theme-text-primary) py-3 rounded-lg font-medium hover:bg-(--theme-surface-muted) hover:border-(--theme-primary) transition-all flex items-center justify-center gap-2"
           >
