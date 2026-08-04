@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
+  Archive,
+  ArchiveRestore,
   AlertTriangle,
   Calendar,
   ClipboardCheck,
@@ -26,18 +29,45 @@ function formatDateHeure(value: string): string {
 }
 
 export default function ProjetsManagerView({ basePath }: { basePath: string }) {
+  const router = useRouter();
   const [projets, setProjets] = useState<ProjetAvecStats[] | null>(null);
+  const [showArchived, setShowArchived] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadProjets = (includeArchived: boolean) => {
+    setProjets(null);
     api
-      .get<ProjetAvecStats[]>("/admin/projets")
-      .then((response) => setProjets(response.data))
+      .get<ProjetAvecStats[]>("/admin/projets", { params: { includeArchived } })
+      .then((response) => {
+        setProjets(includeArchived ? response.data.filter((p) => p.isArchived) : response.data);
+      })
       .catch((err) => {
         setProjets([]);
         setError(getErrorMessage(err));
       });
-  }, []);
+  };
+
+  useEffect(() => {
+    loadProjets(showArchived);
+  }, [showArchived]);
+
+  const handleArchive = async (id: string) => {
+    try {
+      await api.patch(`/admin/projets/${id}/archive`);
+      loadProjets(showArchived);
+    } catch (err) {
+      setError(getErrorMessage(err));
+    }
+  };
+
+  const handleUnarchive = async (id: string) => {
+    try {
+      await api.patch(`/admin/projets/${id}/unarchive`);
+      loadProjets(showArchived);
+    } catch (err) {
+      setError(getErrorMessage(err));
+    }
+  };
 
   const enRetardCount = projets?.filter((p) => p.enRetard).length ?? 0;
 
@@ -68,19 +98,52 @@ export default function ProjetsManagerView({ basePath }: { basePath: string }) {
         </div>
       )}
 
+      <div className="flex items-center gap-2 border-b border-(--theme-border)">
+        <button
+          type="button"
+          onClick={() => setShowArchived(false)}
+          className={`px-4 py-2 text-sm font-semibold border-b-2 -mb-px transition-colors ${
+            !showArchived
+              ? "border-(--theme-primary) text-(--theme-text-primary)"
+              : "border-transparent text-(--theme-text-secondary) hover:text-(--theme-text-primary)"
+          }`}
+        >
+          Actifs
+        </button>
+        <button
+          type="button"
+          onClick={() => setShowArchived(true)}
+          className={`px-4 py-2 text-sm font-semibold border-b-2 -mb-px transition-colors ${
+            showArchived
+              ? "border-(--theme-primary) text-(--theme-text-primary)"
+              : "border-transparent text-(--theme-text-secondary) hover:text-(--theme-text-primary)"
+          }`}
+        >
+          Archivés
+        </button>
+      </div>
+
       {projets === null ? (
         <p className="text-sm text-(--theme-text-secondary)">Chargement...</p>
       ) : projets.length === 0 ? (
         <div className="bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl p-12 text-center flex flex-col items-center gap-2">
           <FolderGit2 size={32} className="text-(--theme-text-secondary)" />
-          <p className="text-sm font-medium text-(--theme-text-primary)">Aucun projet créé pour le moment.</p>
+          <p className="text-sm font-medium text-(--theme-text-primary)">
+            {showArchived ? "Aucun projet archivé." : "Aucun projet créé pour le moment."}
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {projets.map((projet) => (
             <div
               key={projet.id}
-              className={`bg-(--theme-card-bg) border rounded-2xl p-5 flex flex-col gap-4 relative overflow-hidden ${
+              role="button"
+              tabIndex={0}
+              onClick={() => router.push(`${basePath}/${projet.id}/soumissions`)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") router.push(`${basePath}/${projet.id}/soumissions`);
+              }}
+              className={`text-left bg-(--theme-card-bg) border rounded-2xl p-5 flex flex-col gap-4 relative overflow-hidden cursor-pointer hover:border-(--theme-primary) transition-colors ${
                 projet.enRetard ? "border-(--theme-error)/40 ring-1 ring-(--theme-error)/20" : "border-(--theme-border)"
               }`}
             >
@@ -115,13 +178,37 @@ export default function ProjetsManagerView({ basePath }: { basePath: string }) {
                   <Calendar size={13} />
                   {formatDateHeure(projet.dateLimite)}
                 </span>
-                <Link
-                  href={`${basePath}/${projet.id}/soumissions`}
-                  className="flex items-center gap-1.5 font-semibold text-(--theme-primary) hover:opacity-80"
-                >
-                  <ClipboardCheck size={13} />
-                  Voir les soumissions
-                </Link>
+                <div className="flex items-center gap-3">
+                  {projet.isArchived ? (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleUnarchive(projet.id);
+                      }}
+                      className="flex items-center gap-1.5 font-semibold text-(--theme-text-secondary) hover:text-(--theme-primary) transition-colors"
+                    >
+                      <ArchiveRestore size={13} />
+                      Réactiver
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleArchive(projet.id);
+                      }}
+                      className="flex items-center gap-1.5 font-semibold text-(--theme-text-secondary) hover:text-(--theme-error) transition-colors"
+                    >
+                      <Archive size={13} />
+                      Archiver
+                    </button>
+                  )}
+                  <span className="flex items-center gap-1.5 font-semibold text-(--theme-primary)">
+                    <ClipboardCheck size={13} />
+                    Voir le détail
+                  </span>
+                </div>
               </div>
             </div>
           ))}

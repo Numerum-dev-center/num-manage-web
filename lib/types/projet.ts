@@ -32,6 +32,7 @@ export interface ApprenantSoumissionSummary {
   firstname: string;
   lastname: string;
   email: string;
+  specialite?: string | null;
 }
 
 export interface Soumission {
@@ -54,6 +55,7 @@ export interface Projet {
   description: string;
   technologies: string;
   dateLimite: string;
+  isArchived: boolean;
   promotionId: string;
   promotion?: { id: string; name: string };
   createdById: string;

@@ -84,7 +84,7 @@ export default function NotificationBell() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl shadow-lg z-50 flex flex-col">
+        <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] max-h-96 overflow-y-auto bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl shadow-lg z-50 flex flex-col">
           <div className="px-4 py-3 border-b border-(--theme-border) shrink-0">
             <h3 className="text-sm font-bold text-(--theme-text-primary)">Notifications</h3>
           </div>

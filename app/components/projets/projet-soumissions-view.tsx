@@ -2,7 +2,21 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, ArrowLeft, Code2, Globe, Loader2, UserMinus, UserPlus, Users } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { z } from "zod";
+import {
+  AlertTriangle,
+  Archive,
+  ArchiveRestore,
+  ArrowLeft,
+  Code2,
+  Globe,
+  Loader2,
+  Trash2,
+  UserMinus,
+  UserPlus,
+  Users,
+} from "lucide-react";
 import api from "@/lib/api";
 import { getErrorMessage } from "@/lib/get-error-message";
 import type {
@@ -13,6 +27,20 @@ import type {
   Soumission,
 } from "@/lib/types/projet";
 import { POSTE_PROJET_LABELS, POSTE_PROJET_OPTIONS } from "@/lib/types/projet";
+
+const updateProjetSchema = z.object({
+  titre: z.string().min(2, "Le titre doit contenir au moins 2 caractères"),
+  description: z.string().min(1, "La description est obligatoire"),
+  technologies: z.string().min(1, "Précisez au moins une technologie"),
+  dateLimite: z.string().min(1, "La date limite est obligatoire"),
+});
+
+type UpdateProjetFormData = z.infer<typeof updateProjetSchema>;
+
+function toDatetimeLocal(value: string): string {
+  // "2026-08-15T23:59:00.000Z" -> "2026-08-15T23:59" pour <input type="datetime-local">
+  return value.slice(0, 16);
+}
 
 function formatDateHeure(value: string): string {
   return new Intl.DateTimeFormat("fr-FR", {
@@ -98,12 +126,39 @@ export default function ProjetSoumissionsView({
   basePath: string;
   projetId: string;
 }) {
+  const router = useRouter();
   const [projet, setProjet] = useState<ProjetAvecStats | null>(null);
   const [soumissions, setSoumissions] = useState<Soumission[] | null>(null);
   const [postes, setPostes] = useState<ApprenantAvecPoste[] | null>(null);
   const [disponibles, setDisponibles] = useState<ApprenantSoumissionSummary[] | null>(null);
   const [showAddApprenant, setShowAddApprenant] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [formData, setFormData] = useState<UpdateProjetFormData>({
+    titre: "",
+    description: "",
+    technologies: "",
+    dateLimite: "",
+  });
+  const [errors, setErrors] = useState<Record<string, string | undefined>>({});
+  const [isSaving, setIsSaving] = useState(false);
+  const [isArchiving, setIsArchiving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const loadProjet = () => {
+    api
+      .get<ProjetAvecStats>(`/admin/projets/${projetId}`)
+      .then((response) => {
+        setProjet(response.data);
+        setFormData({
+          titre: response.data.titre,
+          description: response.data.description,
+          technologies: response.data.technologies,
+          dateLimite: toDatetimeLocal(response.data.dateLimite),
+        });
+      })
+      .catch((err) => setError(getErrorMessage(err)));
+  };
 
   const loadRoster = () => {
     api
@@ -118,10 +173,7 @@ export default function ProjetSoumissionsView({
   };
 
   useEffect(() => {
-    api
-      .get<ProjetAvecStats>(`/admin/projets/${projetId}`)
-      .then((response) => setProjet(response.data))
-      .catch((err) => setError(getErrorMessage(err)));
+    loadProjet();
 
     api
       .get<Soumission[]>(`/admin/projets/${projetId}/soumissions`)
@@ -134,6 +186,74 @@ export default function ProjetSoumissionsView({
     loadRoster();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projetId]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((current) => ({ ...current, [name]: value }));
+    setErrors((current) => ({ ...current, [name]: undefined }));
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    const result = updateProjetSchema.safeParse(formData);
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors;
+      setErrors({
+        titre: fieldErrors.titre?.[0],
+        description: fieldErrors.description?.[0],
+        technologies: fieldErrors.technologies?.[0],
+        dateLimite: fieldErrors.dateLimite?.[0],
+      });
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await api.patch(`/admin/projets/${projetId}`, result.data);
+      loadProjet();
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleArchive = async () => {
+    setIsArchiving(true);
+    try {
+      await api.patch(`/admin/projets/${projetId}/archive`);
+      loadProjet();
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setIsArchiving(false);
+    }
+  };
+
+  const handleUnarchive = async () => {
+    setIsArchiving(true);
+    try {
+      await api.patch(`/admin/projets/${projetId}/unarchive`);
+      loadProjet();
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setIsArchiving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!projet) return;
+    if (!confirm(`Supprimer le projet "${projet.titre}" ? Cette action est irréversible.`)) return;
+    setIsDeleting(true);
+    try {
+      await api.delete(`/admin/projets/${projetId}`);
+      router.push(basePath);
+    } catch (err) {
+      setError(getErrorMessage(err));
+      setIsDeleting(false);
+    }
+  };
 
   const handleNoted = (updated: Soumission) => {
     setSoumissions((current) =>
@@ -200,21 +320,130 @@ export default function ProjetSoumissionsView({
       {error && <p className="text-sm font-medium text-(--theme-error)">{error}</p>}
 
       {projet && (
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-(--theme-text-primary)">{projet.titre}</h1>
-            {projet.enRetard && (
-              <span className="flex items-center gap-1 text-[10px] font-black uppercase px-2 py-1 rounded-md bg-(--theme-error) text-white">
-                <AlertTriangle size={11} />
-                Délai dépassé
-              </span>
-            )}
+        <form
+          onSubmit={handleSave}
+          className="bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl p-6 flex flex-col gap-4"
+        >
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              {projet.isArchived && (
+                <span className="text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full bg-(--theme-surface-muted) text-(--theme-text-secondary)">
+                  Archivé
+                </span>
+              )}
+              {projet.enRetard && (
+                <span className="flex items-center gap-1 text-[10px] font-black uppercase px-2 py-1 rounded-md bg-(--theme-error) text-white">
+                  <AlertTriangle size={11} />
+                  Délai dépassé
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-(--theme-text-secondary)">
+              {projet.promotion?.name} · Limite : {formatDateHeure(projet.dateLimite)} · {projet.totalSoumissions}/
+              {projet.totalApprenants} rendus, {projet.totalEvaluees} noté(s)
+            </p>
           </div>
-          <p className="text-sm text-(--theme-text-secondary) mt-1">
-            {projet.promotion?.name} · Limite : {formatDateHeure(projet.dateLimite)} · {projet.totalSoumissions}/
-            {projet.totalApprenants} rendus, {projet.totalEvaluees} noté(s)
-          </p>
-        </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-(--theme-text-primary)">Titre</label>
+            <input
+              type="text"
+              name="titre"
+              value={formData.titre}
+              onChange={handleChange}
+              className={`w-full px-4 py-3 rounded-lg border bg-(--theme-input-bg) text-(--theme-text-primary) outline-none ${
+                errors.titre ? "border-(--theme-error)" : "border-(--theme-border-strong)"
+              }`}
+            />
+            {errors.titre && <p className="text-xs text-(--theme-error)">{errors.titre}</p>}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-(--theme-text-primary)">Description &amp; consignes</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows={4}
+              className={`w-full px-4 py-3 rounded-lg border bg-(--theme-input-bg) text-(--theme-text-primary) outline-none resize-none ${
+                errors.description ? "border-(--theme-error)" : "border-(--theme-border-strong)"
+              }`}
+            />
+            {errors.description && <p className="text-xs text-(--theme-error)">{errors.description}</p>}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-semibold text-(--theme-text-primary)">Technologies</label>
+              <input
+                type="text"
+                name="technologies"
+                value={formData.technologies}
+                onChange={handleChange}
+                className={`w-full px-4 py-3 rounded-lg border bg-(--theme-input-bg) text-(--theme-text-primary) outline-none ${
+                  errors.technologies ? "border-(--theme-error)" : "border-(--theme-border-strong)"
+                }`}
+              />
+              {errors.technologies && <p className="text-xs text-(--theme-error)">{errors.technologies}</p>}
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-semibold text-(--theme-text-primary)">Date et heure limite</label>
+              <input
+                type="datetime-local"
+                name="dateLimite"
+                value={formData.dateLimite}
+                onChange={handleChange}
+                className={`w-full px-4 py-3 rounded-lg border bg-(--theme-input-bg) text-(--theme-text-primary) outline-none ${
+                  errors.dateLimite ? "border-(--theme-error)" : "border-(--theme-border-strong)"
+                }`}
+              />
+              {errors.dateLimite && <p className="text-xs text-(--theme-error)">{errors.dateLimite}</p>}
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="submit"
+              disabled={isSaving}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-(--theme-primary) text-(--theme-text-inverse) text-sm font-semibold hover:bg-(--theme-primary-hover) transition-colors disabled:opacity-70"
+            >
+              {isSaving && <Loader2 size={16} className="animate-spin" />}
+              {isSaving ? "Enregistrement..." : "Enregistrer"}
+            </button>
+
+            {projet.isArchived ? (
+              <button
+                type="button"
+                onClick={handleUnarchive}
+                disabled={isArchiving}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-(--theme-border-strong) text-sm font-semibold text-(--theme-text-primary) hover:bg-(--theme-surface-muted) transition-colors disabled:opacity-70"
+              >
+                {isArchiving ? <Loader2 size={16} className="animate-spin" /> : <ArchiveRestore size={16} />}
+                Réactiver
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleArchive}
+                disabled={isArchiving}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-(--theme-border-strong) text-sm font-semibold text-(--theme-text-primary) hover:bg-(--theme-surface-muted) transition-colors disabled:opacity-70"
+              >
+                {isArchiving ? <Loader2 size={16} className="animate-spin" /> : <Archive size={16} />}
+                Archiver
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-(--theme-error)/30 text-sm font-semibold text-(--theme-error) hover:bg-(--theme-error)/10 transition-colors disabled:opacity-70 ml-auto"
+            >
+              {isDeleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+              Supprimer
+            </button>
+          </div>
+        </form>
       )}
 
       <div className="bg-(--theme-card-bg) border border-(--theme-border) rounded-2xl p-6 flex flex-col gap-4">
@@ -247,8 +476,13 @@ export default function ProjetSoumissionsView({
                 key={apprenant.id}
                 className="flex items-center justify-between gap-2 px-4 py-2.5 rounded-lg bg-(--theme-surface-muted)"
               >
-                <span className="text-sm text-(--theme-text-primary) truncate">
-                  {apprenant.firstname} {apprenant.lastname}
+                <span className="flex flex-col min-w-0">
+                  <span className="text-sm text-(--theme-text-primary) truncate">
+                    {apprenant.firstname} {apprenant.lastname}
+                  </span>
+                  {apprenant.specialite && (
+                    <span className="text-[11px] text-(--theme-text-secondary) truncate">{apprenant.specialite}</span>
+                  )}
                 </span>
                 <div className="flex items-center gap-1.5 shrink-0">
                   <select
@@ -294,8 +528,15 @@ export default function ProjetSoumissionsView({
                     key={apprenant.id}
                     className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg bg-(--theme-surface-muted)"
                   >
-                    <span className="text-sm text-(--theme-text-primary) truncate">
-                      {apprenant.firstname} {apprenant.lastname}
+                    <span className="flex flex-col min-w-0">
+                      <span className="text-sm text-(--theme-text-primary) truncate">
+                        {apprenant.firstname} {apprenant.lastname}
+                      </span>
+                      {apprenant.specialite && (
+                        <span className="text-[11px] text-(--theme-text-secondary) truncate">
+                          {apprenant.specialite}
+                        </span>
+                      )}
                     </span>
                     <button
                       type="button"

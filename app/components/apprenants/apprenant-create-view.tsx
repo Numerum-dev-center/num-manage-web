@@ -8,6 +8,7 @@ import { z } from "zod";
 import api from "@/lib/api";
 import { getErrorMessage } from "@/lib/get-error-message";
 import type { ApprenantSummary } from "@/lib/types/user";
+import { POSTE_PROJET_LABELS, POSTE_PROJET_OPTIONS } from "@/lib/types/projet";
 
 const createApprenantSchema = z.object({
   firstname: z.string().min(2, "Le prénom doit contenir au moins 2 caractères"),
@@ -34,7 +35,7 @@ export default function ApprenantCreateView({ basePath }: { basePath: string }) 
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((current) => ({ ...current, [name]: value }));
     setErrors((current) => ({ ...current, [name]: undefined }));
@@ -165,15 +166,22 @@ export default function ApprenantCreateView({ basePath }: { basePath: string }) 
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-semibold text-(--theme-text-primary)">Spécialité (optionnel)</label>
-            <input
-              type="text"
+            <label className="text-sm font-semibold text-(--theme-text-primary)">
+              Spécialité d&apos;inscription (optionnel)
+            </label>
+            <select
               name="specialite"
               value={formData.specialite}
               onChange={handleChange}
-              placeholder="Ex : Développeur Full-Stack"
               className="w-full px-4 py-3 rounded-lg border border-(--theme-border-strong) bg-(--theme-input-bg) text-(--theme-text-primary) outline-none"
-            />
+            >
+              <option value="">Non renseignée</option>
+              {POSTE_PROJET_OPTIONS.map((option) => (
+                <option key={option} value={POSTE_PROJET_LABELS[option]}>
+                  {POSTE_PROJET_LABELS[option]}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 

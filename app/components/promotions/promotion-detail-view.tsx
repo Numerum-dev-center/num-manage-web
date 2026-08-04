@@ -344,6 +344,9 @@ export default function PromotionDetailView({
                 <span className="text-sm text-(--theme-text-primary)">
                   {apprenant.firstname} {apprenant.lastname}
                   <span className="text-(--theme-text-secondary)"> · {apprenant.email}</span>
+                  {apprenant.specialite && (
+                    <span className="text-(--theme-text-secondary)"> · {apprenant.specialite}</span>
+                  )}
                 </span>
                 {!promotion.isArchived && (
                   <button
@@ -380,6 +383,9 @@ export default function PromotionDetailView({
                         <span className="text-sm text-(--theme-text-primary)">
                           {apprenant.firstname} {apprenant.lastname}
                           <span className="text-(--theme-text-secondary)"> · {apprenant.email}</span>
+                          {apprenant.specialite && (
+                            <span className="text-(--theme-text-secondary)"> · {apprenant.specialite}</span>
+                          )}
                         </span>
                       </label>
                     </li>
