@@ -266,7 +266,7 @@ export default function RessourcesManagerView() {
         </div>
 
         {depositMode === "file" ? (
-          <div className="flex flex-col gap-1">
+          <div key="file" className="flex flex-col gap-1">
             <label className="text-sm font-semibold text-(--theme-text-primary)">Fichier (PDF ou ZIP, 10 Mo max)</label>
             <input
               ref={fileInputRef}
@@ -283,7 +283,7 @@ export default function RessourcesManagerView() {
             )}
           </div>
         ) : (
-          <div className="flex flex-col gap-1">
+          <div key="lien" className="flex flex-col gap-1">
             <label className="text-sm font-semibold text-(--theme-text-primary)">Lien externe</label>
             <input
               type="url"
